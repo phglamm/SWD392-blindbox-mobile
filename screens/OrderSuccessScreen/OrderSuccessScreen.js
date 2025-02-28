@@ -1,10 +1,10 @@
 import { View, Text } from "react-native";
 import React from "react";
 
-export default function BlogScreen() {
+export default function OrderSuccessScreen() {
   return (
     <View>
-      <Text>BlogScreen</Text>
+      <Text>OrderSuccessScreen</Text>
     </View>
   );
 }

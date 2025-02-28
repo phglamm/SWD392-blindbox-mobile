@@ -1,21 +1,21 @@
 import { View, Text } from "react-native";
 import React from "react";
+import HomeScreen from "./../screens/HomeScreen/HomeScreen";
+import ProductDetailScreen from "./../screens/ProductDetailScreen/ProductDetailScreen";
+import ProductScreen from "./../screens/ProductScreen/ProductScreen";
+import BoxItemScreen from "./../screens/BoxItemScreen/BoxItemScreen";
+import BoxItemDetailScreen from "./../screens/BoxItemDetailScreen/BoxItemDetailScreen";
+import UserProfileScreen from "./../screens/UserProfileScreen/UserProfileScreen";
+import LoginScreen from "../screens/LoginScreen/LoginScreen";
+import RegisterScreen from "./../screens/RegisterScreen/RegisterScreen";
+import CartScreen from "./../screens/CartScreen/CartScreen";
 import { NavigationContainer } from "@react-navigation/native";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import HomeScreen from "../screens/HomeScreen";
-import ProductScreen from "../screens/ProductScreen";
-import BoxItemScreen from "../screens/BoxItemScreen";
-import BoxItemDetailScreen from "../screens/BoxItemDetailScreen";
-import CartScreen from "../screens/CartScreen";
-import ProductDetailScreen from "./../screens/ProductDetailScreen";
-import UserProfileScreen from "../screens/UserProfileScreen";
-import LoginScreen from "../screens/LoginScreen";
-import RegisterScreen from "../screens/RegisterScreen";
 
 export default function Navigator() {
   const Tab = createBottomTabNavigator();
-  const Stack = createStackNavigator();
+  const Stack = createNativeStackNavigator();
 
   const HomeStack = () => {
     return (

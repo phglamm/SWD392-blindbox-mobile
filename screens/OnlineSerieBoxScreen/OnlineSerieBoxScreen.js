@@ -1,10 +1,10 @@
 import { View, Text } from "react-native";
 import React from "react";
 
-export default function OnlineSerieBox() {
+export default function OnlineSerieBoxScreen() {
   return (
     <View>
-      <Text>OnlineSerieBox</Text>
+      <Text>OnlineSerieBoxScreen</Text>
     </View>
   );
 }
