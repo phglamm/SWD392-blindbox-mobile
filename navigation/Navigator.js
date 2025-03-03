@@ -22,17 +22,25 @@ export default function Navigator() {
       <Stack.Navigator>
         <Stack.Screen name="HomeScreen" component={HomeScreen} />
         <Stack.Screen name="Product" component={ProductScreen} />
-        <Stack.Screen name="ProductDetail" component={ProductDetailScreen} />
+        <Stack.Screen
+          name="ProductDetailScreen"
+          component={ProductDetailScreen}
+        />
       </Stack.Navigator>
     );
   };
   const ProductStack = () => {
     return (
       <Stack.Navigator>
-        <Stack.Screen name="ProductScreen" component={ProductScreen} />
+        <Stack.Screen
+          name="Our Product"
+          component={ProductScreen}
+          options={{ headerTitleAlign: "center" }}
+        />
         <Stack.Screen
           name="ProductDetailScreen"
           component={ProductDetailScreen}
+          options={{ headerShown: false }}
         />
       </Stack.Navigator>
     );
