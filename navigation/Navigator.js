@@ -57,12 +57,12 @@ export default function Navigator() {
   const UserStack = () => {
     return (
       <Stack.Navigator>
+        <Stack.Screen name="UserProfile" component={UserProfileScreen} />
         <Stack.Screen
           name="Your Favorites Box"
           component={FavoritesScreen}
           options={{ headerTitleAlign: "center" }}
         />
-        <Stack.Screen name="UserProfile" component={UserProfileScreen} />
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Register" component={RegisterScreen} />
       </Stack.Navigator>
