@@ -12,6 +12,7 @@ import CartScreen from "./../screens/CartScreen/CartScreen";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import FavoritesScreen from "../screens/FavoritesScreen/FavoritesScreen";
 
 export default function Navigator() {
   const Tab = createBottomTabNavigator();
@@ -56,6 +57,11 @@ export default function Navigator() {
   const UserStack = () => {
     return (
       <Stack.Navigator>
+        <Stack.Screen
+          name="Your Favorites Box"
+          component={FavoritesScreen}
+          options={{ headerTitleAlign: "center" }}
+        />
         <Stack.Screen name="UserProfile" component={UserProfileScreen} />
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Register" component={RegisterScreen} />

@@ -10,13 +10,15 @@ import {
 import Carousel from "react-native-reanimated-carousel";
 import api from "../../api/api";
 import { Picker } from "@react-native-picker/picker";
+import { useFavorites } from "../../context/FavoritesContext";
 
 export default function ProductDetailScreen({ route }) {
   const { boxId } = route.params;
   const [boxDetail, setBoxDetail] = useState({});
   const [selectedOption, setSelectedOption] = useState(null);
-
   const { width } = Dimensions.get("window");
+  const { favorites, toggleFavorite } = useFavorites();
+  const isFavorite = favorites.some((fav) => fav.boxId === boxDetail.boxId);
 
   useEffect(() => {
     const fetchBoxDetail = async () => {
@@ -114,8 +116,15 @@ export default function ProductDetailScreen({ route }) {
 
       {/* Fixed Buttons */}
       <View style={styles.fixedButtonsContainer}>
-        <TouchableOpacity style={[styles.button, styles.favoriteButton]}>
-          <Text style={styles.buttonTextFavor}>Add to Favorites</Text>
+        <TouchableOpacity
+          style={[styles.button, styles.favoriteButton]}
+          onPress={() => toggleFavorite(boxDetail)}
+        >
+          {isFavorite ? (
+            <Text style={styles.buttonTextFavor}>Remove from Favorites</Text>
+          ) : (
+            <Text style={styles.buttonTextFavor}>Add to Favorites</Text>
+          )}
         </TouchableOpacity>
         <TouchableOpacity style={[styles.button, styles.cartButton]}>
           <Text style={styles.buttonText}>Add to Cart</Text>
