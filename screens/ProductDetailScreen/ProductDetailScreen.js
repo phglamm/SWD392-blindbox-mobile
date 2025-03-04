@@ -11,6 +11,8 @@ import Carousel from "react-native-reanimated-carousel";
 import api from "../../api/api";
 import { Picker } from "@react-native-picker/picker";
 import { useFavorites } from "../../context/FavoritesContext";
+import { useCart } from "../../context/CartContext";
+import Toast from "react-native-toast-message";
 
 export default function ProductDetailScreen({ route }) {
   const { boxId } = route.params;
@@ -19,7 +21,7 @@ export default function ProductDetailScreen({ route }) {
   const { width } = Dimensions.get("window");
   const { favorites, toggleFavorite } = useFavorites();
   const isFavorite = favorites.some((fav) => fav.boxId === boxDetail.boxId);
-
+  const { addToCart } = useCart();
   useEffect(() => {
     const fetchBoxDetail = async () => {
       try {
@@ -42,6 +44,15 @@ export default function ProductDetailScreen({ route }) {
     fetchBoxDetail();
   }, []);
 
+  const handleAddToCart = () => {
+    addToCart(boxDetail, selectedOption);
+    Toast.show({
+      type: "success",
+      text1: "Added to Cart",
+      text2: `${boxDetail.boxName} (${selectedOption?.boxOptionName})`,
+      visibilityTime: 2000,
+    });
+  };
   return (
     <View style={styles.container}>
       {Array.isArray(boxDetail.boxImage) && boxDetail.boxImage.length > 0 ? (
@@ -126,7 +137,10 @@ export default function ProductDetailScreen({ route }) {
             <Text style={styles.buttonTextFavor}>Add to Favorites</Text>
           )}
         </TouchableOpacity>
-        <TouchableOpacity style={[styles.button, styles.cartButton]}>
+        <TouchableOpacity
+          style={[styles.button, styles.cartButton]}
+          onPress={handleAddToCart}
+        >
           <Text style={styles.buttonText}>Add to Cart</Text>
         </TouchableOpacity>
       </View>
@@ -135,7 +149,9 @@ export default function ProductDetailScreen({ route }) {
 }
 
 const styles = StyleSheet.create({
-  container: {},
+  container: { flex: 1 },
+  scrollContainer: { paddingBottom: 100 }, // Prevents content from being covered
+
   imageContainer: {
     justifyContent: "center",
     alignItems: "center",
@@ -196,11 +212,13 @@ const styles = StyleSheet.create({
 
   fixedButtonsContainer: {
     position: "absolute",
-    bottom: -250,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    padding: 15,
     width: "100%",
     flexDirection: "row",
     justifyContent: "space-between",
-    padding: 15,
   },
   button: {
     flex: 1,

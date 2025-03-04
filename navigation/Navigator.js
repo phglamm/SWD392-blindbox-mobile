@@ -71,7 +71,11 @@ export default function Navigator() {
   const CartStack = () => {
     return (
       <Stack.Navigator>
-        <Stack.Screen name="CartScreen" component={CartScreen} />
+        <Stack.Screen
+          name="Your cart"
+          component={CartScreen}
+          options={{ headerTitleAlign: "center" }}
+        />
       </Stack.Navigator>
     );
   };
