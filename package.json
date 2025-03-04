@@ -31,7 +31,10 @@
     "react-native-snap-carousel": "^3.9.1",
     "react-native-toast-message": "^2.2.1",
     "swd392-blindbox-mobile": "file:",
-    "tailwindcss": "^3.4.17"
+    "tailwindcss": "^3.4.17",
+    "react-dom": "18.3.1",
+    "react-native-web": "0.19.13",
+    "@expo/metro-runtime": "4.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"
