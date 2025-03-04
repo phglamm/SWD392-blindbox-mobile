@@ -8,6 +8,7 @@ import {
   StyleSheet,
 } from "react-native";
 import { useCart } from "../../context/CartContext";
+import { useNavigation } from "@react-navigation/native";
 
 export default function CartScreen() {
   const { cart, removeFromCart, increaseQuantity, decreaseQuantity } =
@@ -17,6 +18,7 @@ export default function CartScreen() {
     (sum, item) => sum + item.selectedOption.displayPrice * item.quantity,
     0
   );
+  const navigation = useNavigation();
 
   return (
     <View style={styles.container}>
@@ -90,7 +92,10 @@ export default function CartScreen() {
           </Text>
         </View>
         <View style={styles.proceedContainer}>
-          <TouchableOpacity style={styles.checkoutButton}>
+          <TouchableOpacity
+            style={styles.checkoutButton}
+            onPress={() => navigation.navigate("Check out")}
+          >
             <Text style={styles.checkoutText}>Proceed to Checkout</Text>
           </TouchableOpacity>
         </View>

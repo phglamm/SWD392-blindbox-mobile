@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
   },
   cardText: {
     marginTop: 10,
-    fontSize: 16,
+    fontSize: 13,
     fontWeight: "bold",
   },
   cardTextSection: {
