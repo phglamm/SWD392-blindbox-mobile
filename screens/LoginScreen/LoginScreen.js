@@ -2,26 +2,60 @@ import React, { useState } from "react";
 import { View, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { TextInput, Button, Text } from "react-native-paper";
 import { FontAwesome } from "@expo/vector-icons";
+import Toast from "react-native-toast-message";
+import api from "../../api/api";
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [secureText, setSecureText] = useState(true);
 
+  const handleLogin = async () => {
+    try {
+      const response = await api.post("Account/login", {
+        email,
+        password,
+      });
+      console.log(response.data);
+      AsyncStorage.setItem("accessToken", response.data.token);
+      AsyncStorage.setItem("user", JSON.stringify(response.data.user));
+      Toast.show({
+        text1: "Success",
+        text2: "Login successful",
+        type: "success",
+      });
+    } catch (error) {
+      console.log(error.response.data);
+      Toast.show({
+        text1: "Error",
+        text2: error.response.data.message,
+        type: "error",
+      });
+    }
+  };
   return (
     <View style={styles.container}>
-      <Image source={require("../../assets/Logo-removebg.png")} style={styles.logo} resizeMode="contain" />
+      <Image
+        source={require("../../assets/Logo-removebg.png")}
+        style={styles.logo}
+        resizeMode="contain"
+      />
       <Text style={styles.title}>Welcome Back!</Text>
 
       {/* Input Email */}
       <TextInput
-        label="Username or Email"
+        label="Email"
         mode="outlined"
         left={<TextInput.Icon icon="account" />}
         value={email}
         onChangeText={(text) => setEmail(text)}
         style={styles.input}
-        theme={{ colors: { primary: "rgb(248, 150, 150)", outline: "rgb(248, 150, 150)" } }}
+        theme={{
+          colors: {
+            primary: "rgb(248, 150, 150)",
+            outline: "rgb(248, 150, 150)",
+          },
+        }}
       />
 
       {/* Input Password */}
@@ -29,12 +63,22 @@ export default function LoginScreen({ navigation }) {
         label="Password"
         mode="outlined"
         left={<TextInput.Icon icon="lock" />}
-        right={<TextInput.Icon icon={secureText ? "eye-off" : "eye"} onPress={() => setSecureText(!secureText)} />}
+        right={
+          <TextInput.Icon
+            icon={secureText ? "eye-off" : "eye"}
+            onPress={() => setSecureText(!secureText)}
+          />
+        }
         secureTextEntry={secureText}
         value={password}
         onChangeText={(text) => setPassword(text)}
         style={styles.input}
-        theme={{ colors: { primary: "rgb(248, 150, 150)", outline: "rgb(248, 150, 150)" } }}
+        theme={{
+          colors: {
+            primary: "rgb(248, 150, 150)",
+            outline: "rgb(248, 150, 150)",
+          },
+        }}
       />
 
       {/* Forgot Password */}
@@ -43,7 +87,7 @@ export default function LoginScreen({ navigation }) {
       </TouchableOpacity>
 
       {/* Login Button */}
-      <Button mode="contained" onPress={() => console.log("Login pressed")} style={styles.button}>
+      <Button mode="contained" onPress={handleLogin} style={styles.button}>
         Login
       </Button>
 
@@ -57,9 +101,11 @@ export default function LoginScreen({ navigation }) {
 
       {/* Sign Up Link */}
       <Text style={styles.registerText}>
-        Create An Account {" "}
+        Create An Account{" "}
         <TouchableOpacity onPress={() => navigation.navigate("Register")}>
-          <Text style={{ fontWeight: "bold", color: "rgb(248, 150, 150)" }}>Sign Up</Text>
+          <Text style={{ fontWeight: "bold", color: "rgb(248, 150, 150)" }}>
+            Sign Up
+          </Text>
         </TouchableOpacity>
       </Text>
     </View>

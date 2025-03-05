@@ -58,14 +58,14 @@ export default function Navigator() {
   const UserStack = () => {
     return (
       <Stack.Navigator>
+        <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen name="Register" component={RegisterScreen} />
         <Stack.Screen name="UserProfile" component={UserProfileScreen} />
         <Stack.Screen
           name="Your Favorites Box"
           component={FavoritesScreen}
           options={{ headerTitleAlign: "center" }}
         />
-        <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name="Register" component={RegisterScreen} />
       </Stack.Navigator>
     );
   };
@@ -120,14 +120,11 @@ export default function Navigator() {
     <NavigationContainer>
       <MainTab />
     </NavigationContainer>
-      // <NavigationContainer>
-      //   <Stack.Navigator initialRouteName="Login">
-      //     <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
-      //     <Stack.Screen name="MainTab" component={MainTab} options={{ headerShown: false }} />
-      //   </Stack.Navigator>
-      // </NavigationContainer>
-    
-
-
+    // <NavigationContainer>
+    //   <Stack.Navigator initialRouteName="Login">
+    //     <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
+    //     <Stack.Screen name="MainTab" component={MainTab} options={{ headerShown: false }} />
+    //   </Stack.Navigator>
+    // </NavigationContainer>
   );
 }
