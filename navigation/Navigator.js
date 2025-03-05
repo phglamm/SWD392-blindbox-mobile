@@ -120,5 +120,14 @@ export default function Navigator() {
     <NavigationContainer>
       <MainTab />
     </NavigationContainer>
+      // <NavigationContainer>
+      //   <Stack.Navigator initialRouteName="Login">
+      //     <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
+      //     <Stack.Screen name="MainTab" component={MainTab} options={{ headerShown: false }} />
+      //   </Stack.Navigator>
+      // </NavigationContainer>
+    
+
+
   );
 }
