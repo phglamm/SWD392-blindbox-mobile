@@ -14,6 +14,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import FavoritesScreen from "../screens/FavoritesScreen/FavoritesScreen";
 import CheckOutScreen from "./../screens/CheckOutScreen/CheckOutScreen";
+import OrderSuccessScreen from "../screens/OrderSuccessScreen/OrderSuccessScreen";
 
 export default function Navigator() {
   const Tab = createBottomTabNavigator();
@@ -121,8 +122,8 @@ export default function Navigator() {
       <MainTab />
     </NavigationContainer>
     // <NavigationContainer>
-    //   <Stack.Navigator initialRouteName="Login">
-    //     <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
+    //   <Stack.Navigator initialRouteName="OrderSuccess">
+    //     <Stack.Screen name="OrderSuccess" component={OrderSuccessScreen} options={{ headerShown: false }} />
     //     <Stack.Screen name="MainTab" component={MainTab} options={{ headerShown: false }} />
     //   </Stack.Navigator>
     // </NavigationContainer>
