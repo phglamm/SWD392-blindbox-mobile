@@ -72,6 +72,8 @@ export default function UserMenuScreen() {
             <TouchableOpacity key={index} onPress={() => {
               if (item.link === "UserProfile") {
                 navigation.navigate(item.link, { email: 'nguyenquanggiap642004@gmail.com' });
+              } else if (item.link === "ManageOrder") {
+                navigation.navigate(item.link, { userId: '20' });
               } else {
                 navigation.navigate(item.link);
               }
