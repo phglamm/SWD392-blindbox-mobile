@@ -15,6 +15,8 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import FavoritesScreen from "../screens/FavoritesScreen/FavoritesScreen";
 import CheckOutScreen from "./../screens/CheckOutScreen/CheckOutScreen";
 import OrderSuccessScreen from "../screens/OrderSuccessScreen/OrderSuccessScreen";
+import UserMenuScreen from "../screens/UserMenuScreen/UserMenuScreen";
+import ManageOrder from "../screens/ManageOrder/ManageOrder";
 
 export default function Navigator() {
   const Tab = createBottomTabNavigator();
@@ -59,9 +61,11 @@ export default function Navigator() {
   const UserStack = () => {
     return (
       <Stack.Navigator>
+        <Stack.Screen name="UserMenu" component={UserMenuScreen} />
         <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name="Register" component={RegisterScreen} />
+        <Stack.Screen name="Register" component={RegisterScreen} /> 
         <Stack.Screen name="UserProfile" component={UserProfileScreen} />
+        <Stack.Screen name="ManageOrder" component={ManageOrder} />
         <Stack.Screen
           name="Your Favorites Box"
           component={FavoritesScreen}
