@@ -1,9 +1,11 @@
-import { View, Text, Image, TouchableOpacity } from "react-native";
+import { View, Text, Image, TouchableOpacity, ScrollView } from "react-native";
 import React, { useEffect, useState } from "react";
 import api from "../../api/api";
+import AddressPOST from "./AddressPOST";
 
 export default function AddressBook() {
     const [addresses, setAddresses] = useState([]);
+    const [addNewAddress, setAddNewAddress] = useState(false);
 
     const fetchAddress = async () => {
         try {
@@ -20,22 +22,40 @@ export default function AddressBook() {
     
       useEffect(() => {
           fetchAddress();
-      }, []);
-console.log(addresses);
+      }, [addNewAddress]);
+
   return (
-    <View style={{ flex: 1, flexDirection:'column', justifyContent:'space-between', alignItems: "center", padding: '4%' }}>
-     <TouchableOpacity style={{width:'100%', height: "15%", backgroundColor: "white", padding:'3%'}} >
-        <View style={{ flexDirection: 'column', width: '100%', height:'100%', justifyContent:'space-between'}}>
-            <View style={{ flexDirection: 'row', width: '100%' ,justifyContent:'flex-start', gap:'3%'}}>
-                <Text style={{width:'40%', color: 'black', fontWeight: 'bold', fontSize: 18, borderRightWidth: 1 }}>Luong The Minh</Text>
-                <Text style={{ color: 'gray', fontSize: 18 }}>0703308389</Text>
+    addNewAddress ? 
+        (
+            <AddressPOST setAddAddress={setAddNewAddress} />
+        ) 
+        : 
+        (
+            <View style={{ flex: 1, flexDirection:'column', alignItems: "center" }}>
+            <ScrollView style={{width:'100%', height: "100%", backgroundColor: "white"}}>
+                {addresses.map((address, index) => (
+                <TouchableOpacity key={index} style={{width:'100%', height: 100, backgroundColor: "white", padding:'3%', borderBottomWidth:1, borderColor:'gray'}} >
+                <View style={{ flexDirection: 'column', width: '100%', height:'100%', justifyContent:'space-between'}}>
+                    <View style={{ flexDirection: 'row', width: '100%' ,justifyContent:'flex-start'}}>
+                        <Text style={{paddingRight:'3%' ,textAlign:'center' ,color: 'black', fontWeight: 'bold', fontSize: 18, borderRightWidth: 1 }}>{address.name}</Text>
+                        <Text style={{ paddingLeft:'3%',textAlign:'center' ,color: 'gray', fontSize: 18 }}> {address.phoneNumber}</Text>
+                    </View>
+                    <Text  style={{ color: 'gray', fontSize: 14 }}> {address.addressDetail}</Text>
+                    <Text  style={{ color: 'gray', fontSize: 14 }}>{address.ward}, {address.district},{" "} {address.province}</Text>
+                </View>
+            </TouchableOpacity>       
+            ))}
+            <View style={{flexDirection:'row', justifyContent:'center', padding:'3%'}}>
+                <TouchableOpacity onPress={() => setAddNewAddress(true)} style={{padding:'1%', borderRadius:50 ,width:'40%', height: 70, backgroundColor: "black", justifyContent:'center', alignItems:'center'}}>
+                    <Text style={{color:'white', fontSize: 14   }}>Add New Address</Text>
+                </TouchableOpacity>
             </View>
-            <Text  style={{ color: 'gray', fontSize: 14 }}>505 Tan Ky Tan Quy</Text>
-            <Text  style={{ color: 'gray', fontSize: 14 }}>Phuong Tan Quy Quan Tan Phu Thanh Pho Thu Duc </Text>
-        </View>
-     </TouchableOpacity>
-      
-      
-    </View>
+            
+            </ScrollView>
+          
+        </View>  
+        )
+
+   
   );
 }
