@@ -17,6 +17,7 @@ import CheckOutScreen from "./../screens/CheckOutScreen/CheckOutScreen";
 import OrderSuccessScreen from "../screens/OrderSuccessScreen/OrderSuccessScreen";
 import UserMenuScreen from "../screens/UserMenuScreen/UserMenuScreen";
 import ManageOrder from "../screens/ManageOrder/ManageOrder";
+import AddressBook from "../screens/AddressBook/AddressBook";
 
 export default function Navigator() {
   const Tab = createBottomTabNavigator();
@@ -25,7 +26,7 @@ export default function Navigator() {
   const HomeStack = () => {
     return (
       <Stack.Navigator>
-        <Stack.Screen name="HomeScreen" component={HomeScreen} />
+        <Stack.Screen name="MysteryMinis" component={HomeScreen} />
         <Stack.Screen name="Product" component={ProductScreen} />
         <Stack.Screen
           name="ProductDetailScreen"
@@ -66,6 +67,7 @@ export default function Navigator() {
         <Stack.Screen name="Register" component={RegisterScreen} /> 
         <Stack.Screen name="UserProfile" component={UserProfileScreen} />
         <Stack.Screen name="ManageOrder" component={ManageOrder} />
+        <Stack.Screen name="AddressBook" component={AddressBook} />
         <Stack.Screen
           name="Your Favorites Box"
           component={FavoritesScreen}

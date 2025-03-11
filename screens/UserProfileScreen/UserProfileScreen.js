@@ -8,6 +8,7 @@ import { Picker } from "@react-native-picker/picker";
 
 export default function UserProfileScreen({ route }) {
   const [userData, setUserData] = useState({});
+  const [user, setUser] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const { email } = route.params;
   const navigation = useNavigation();
@@ -19,6 +20,18 @@ export default function UserProfileScreen({ route }) {
     { title: "FullName", value: userData.fullname, key: 'fullname' },
     { title: "Gender", value: userData.gender, key: 'gender' },
   ];
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const userData = await AsyncStorage.getItem("user");
+      if (userData) {
+        setUser(JSON.parse(userData));
+      }
+    };
+    fetchUser();
+  }, []);
+
+
 
   const fetchUserProfile = async () => {
     try {

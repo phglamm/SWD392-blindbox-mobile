@@ -6,7 +6,7 @@ export default function UserMenuScreen() {
    const navigation = useNavigation();
     const menuItems = [
       { title: "My Profile", link:"UserProfile" },
-      { title: "Address Book" },
+      { title: "Address Book", link:"AddressBook" },
       { title: "My Order", link:"ManageOrder" },
       { title: "My Collection" },
       { title: "Contact Us" },
