@@ -15,11 +15,12 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import FavoritesScreen from "../screens/FavoritesScreen/FavoritesScreen";
 import CheckOutScreen from "./../screens/CheckOutScreen/CheckOutScreen";
 import OrderSuccessScreen from "../screens/OrderSuccessScreen/OrderSuccessScreen";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Navigator() {
   const Tab = createBottomTabNavigator();
   const Stack = createNativeStackNavigator();
-
+  const user = AsyncStorage.getItem("user");
   const HomeStack = () => {
     return (
       <Stack.Navigator>
