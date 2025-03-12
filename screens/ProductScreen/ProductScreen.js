@@ -27,7 +27,6 @@ export default function ProductScreen() {
     setLoading(true);
     try {
       const response = await api.get(`Box`);
-      console.log(response.data);
       const sortReponse = response.data.sort((a, b) => b.boxId - a.boxId);
       setBoxes(sortReponse);
     } catch (error) {
@@ -72,9 +71,9 @@ export default function ProductScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.searchContainer}>
+      {/* <View style={styles.searchContainer}>
         <TextInput style={styles.searchInput} placeholder="Tìm kiếm" />
-      </View>
+      </View> */}
 
       <FlatList
         data={boxes}
