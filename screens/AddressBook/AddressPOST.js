@@ -107,50 +107,77 @@ const AddressPOST = ({ setAddAddress }) => {
   };
 
   return (
-    <View style={{ padding: 20 }}>
+    <View style={{ padding: 10 }}>
+      <Text style={{ fontSize: 20, marginBottom: 20 ,marginTop:20 , textAlign:'center' }}>Add New Address</Text>
+      <View style={{ marginBottom: 10, backgroundColor: "white", padding: '5%', borderRadius: 20 }}> 
+        <Text style={{ fontSize: 20, marginBottom: 10, fontWeight:'bold' }}>Contact Information</Text>
+        {[
+          { title: "Full Name" ,key: "name", placeholder: "Enter your name" },
+          { title: "Phone Number", key: "phoneNumber", placeholder: "Enter your phone number" },
+        ].map(({ key, placeholder, title }) => (
+          <View key={key} style={{ marginBottom: 10 , padding: '1%'}}>
+            <Text style={{fontSize:16}}>{title}</Text>
+            <TextInput
+              style={{ borderBottomWidth: 0.5}}
+              placeholder={placeholder}
+              value={formData[key]}
+              onChangeText={(value) => handleChange(key, value)}
+            />
+          </View>
+        ))}
+      </View>
+
+      <View style={{ marginBottom: 10, backgroundColor: "white", padding: '5%', borderRadius: 20 }}> 
+        <Text style={{ fontSize: 20, marginBottom: 10, fontWeight:'bold' }}>Address Information</Text>
       {[
-        { key: "name", placeholder: "Enter your name" },
-        { key: "phoneNumber", placeholder: "Enter your phone number" },
-        { key: "addressDetail", placeholder: "Enter your address detail" },
-      ].map(({ key, placeholder }) => (
-        <TextInput
-          key={key}
-          style={{ borderBottomWidth: 1, marginBottom: 10, padding: 5 }}
-          placeholder={placeholder}
-          value={formData[key]}
-          onChangeText={(value) => handleChange(key, value)}
-        />
-      ))}
-
-      <Picker
-        selectedValue={formData.provinceId}
-        onValueChange={(value) => {
-          const selectedProvince = provinces.find((p) => p.ProvinceID === value);
-          setFormData({ ...formData, provinceId: value, province: selectedProvince?.ProvinceName, districtId: null, wardCode: null });
-          fetchDistricts(value);
-        }}
-      >
-        <Picker.Item label="Select Province" value={null} />
-        {provinces.map((prov) => (
-          <Picker.Item key={prov.ProvinceID} label={prov.ProvinceName} value={prov.ProvinceID} />
+          { title:"Address Detail", key: "addressDetail", placeholder: "Enter your address detail" },
+        ].map(({ key, placeholder, title }) => (
+          <View key={key} style={{ marginBottom: 10 , padding: '1%'}}>
+            <Text style={{fontSize:16}}>{title}</Text>
+            <TextInput
+              style={{ borderBottomWidth: 0.5}}
+              placeholder={placeholder}
+              value={formData[key]}
+              onChangeText={(value) => handleChange(key, value)}
+            />
+          </View>
         ))}
-      </Picker>
+      
+      <View  style={{ marginBottom: 10, borderWidth: 1, borderColor: "gray" }}>
+        <Picker
+          selectedValue={formData.provinceId}
+          onValueChange={(value) => {
+            const selectedProvince = provinces.find((p) => p.ProvinceID === value);
+            setFormData({ ...formData, provinceId: value, province: selectedProvince?.ProvinceName, districtId: null, wardCode: null });
+            fetchDistricts(value);
+          }}
+        >
+          <Picker.Item label="Select Province" value={null} />
+          {provinces.map((prov) => (
+            <Picker.Item key={prov.ProvinceID} label={prov.ProvinceName} value={prov.ProvinceID} />
+          ))}
+        </Picker>
+        </View>
 
+    <View  style={{ marginBottom: 10, borderWidth: 1, borderColor: "gray" }}>
       <Picker
-        selectedValue={formData.districtId}
-        onValueChange={(value) => {
-          const selectedDistrict = districts.find((d) => d.DistrictID === value);
-          setFormData({ ...formData, districtId: value, district: selectedDistrict?.DistrictName, wardCode: null });
-          fetchWards(value);
-        }}
-        enabled={!!formData.provinceId}
-      >
-        <Picker.Item label="Select District" value={null} />
-        {districts.map((dist) => (
-          <Picker.Item key={dist.DistrictID} label={dist.DistrictName} value={dist.DistrictID} />
-        ))}
-      </Picker>
-
+         
+          selectedValue={formData.districtId}
+          onValueChange={(value) => {
+            const selectedDistrict = districts.find((d) => d.DistrictID === value);
+            setFormData({ ...formData, districtId: value, district: selectedDistrict?.DistrictName, wardCode: null });
+            fetchWards(value);
+          }}
+          enabled={!!formData.provinceId}
+        >
+          <Picker.Item label="Select District" value={null} />
+          {districts.map((dist) => (
+            <Picker.Item key={dist.DistrictID} label={dist.DistrictName} value={dist.DistrictID} />
+          ))}
+        </Picker>
+    </View>
+      
+    <View  style={{ marginBottom: 10, borderWidth: 1, borderColor: "gray" }}>
       <Picker
         selectedValue={formData.wardCode}
         onValueChange={(value) => {
@@ -164,8 +191,10 @@ const AddressPOST = ({ setAddAddress }) => {
           <Picker.Item key={ward.WardCode} label={ward.WardName} value={ward.WardCode} />
         ))}
       </Picker>
+    </View>
+  </View>
 
-      <TouchableOpacity disabled={loading} style={{ backgroundColor: loading ? "gray" : "black", padding: 10, borderRadius: 5, marginTop: 20 }} onPress={handleUpdateAddress}>
+      <TouchableOpacity disabled={loading} style={{ backgroundColor: loading ? "gray" : "black", padding: 10, borderRadius: 5 }} onPress={handleUpdateAddress}>
         <Text style={{ color: "white", textAlign: "center" }}>{loading ? "Saving..." : "Save Changes"}</Text>
       </TouchableOpacity>
     </View>

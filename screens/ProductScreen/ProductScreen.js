@@ -27,7 +27,6 @@ export default function ProductScreen() {
     setLoading(true);
     try {
       const response = await api.get(`Box`);
-      console.log(response.data);
       const sortReponse = response.data.sort((a, b) => b.boxId - a.boxId);
       setBoxes(sortReponse);
     } catch (error) {
