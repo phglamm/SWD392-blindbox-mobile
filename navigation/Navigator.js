@@ -166,14 +166,14 @@ export default function Navigator() {
     );
   };
   return (
-    <NavigationContainer>
-      <MainTab />
-    </NavigationContainer>
     // <NavigationContainer>
-    //   <Stack.Navigator initialRouteName="BlogScreen">
-    //     <Stack.Screen name="BlogScreen" component={BlogScreen} options={{ headerShown: true }} />
-    //     <Stack.Screen name="MainTab" component={MainTab} options={{ headerShown: false }} />
-    //   </Stack.Navigator>
+    //   <MainTab />
     // </NavigationContainer>
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="BlogScreen">
+        <Stack.Screen name="BlogScreen" component={BlogScreen} options={{ headerShown: true }} />
+        <Stack.Screen name="MainTab" component={MainTab} options={{ headerShown: false }} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
