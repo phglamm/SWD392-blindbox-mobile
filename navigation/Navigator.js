@@ -20,6 +20,7 @@ import ManageOrder from "../screens/ManageOrderScreen/ManageOrder";
 import AddressBook from "../screens/AddressBook/AddressBook";
 import SearchInput from "../components/SearchInput/SearchInput";
 import OrderDetailScreen from "./../screens/OrderDetailScreen/OrderDetailScreen";
+import BlogScreen from "../screens/BlogScreen/BlogScreen";
 
 export default function Navigator() {
   const Tab = createBottomTabNavigator();
@@ -165,14 +166,14 @@ export default function Navigator() {
     );
   };
   return (
-    <NavigationContainer>
-      <MainTab />
-    </NavigationContainer>
     // <NavigationContainer>
-    //   <Stack.Navigator initialRouteName="OrderSuccess">
-    //     <Stack.Screen name="OrderSuccess" component={OrderSuccessScreen} options={{ headerShown: false }} />
-    //     <Stack.Screen name="MainTab" component={MainTab} options={{ headerShown: false }} />
-    //   </Stack.Navigator>
+    //   <MainTab />
     // </NavigationContainer>
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="BlogScreen">
+        <Stack.Screen name="BlogScreen" component={BlogScreen} options={{ headerShown: true }} />
+        <Stack.Screen name="MainTab" component={MainTab} options={{ headerShown: false }} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
