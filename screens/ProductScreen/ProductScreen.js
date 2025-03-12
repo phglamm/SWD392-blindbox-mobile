@@ -71,9 +71,9 @@ export default function ProductScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.searchContainer}>
+      {/* <View style={styles.searchContainer}>
         <TextInput style={styles.searchInput} placeholder="Tìm kiếm" />
-      </View>
+      </View> */}
 
       <FlatList
         data={boxes}

@@ -2,10 +2,13 @@ import { View, Text, Image, TouchableOpacity, ScrollView } from "react-native";
 import React, { useEffect, useState } from "react";
 import api from "../../api/api";
 import AddressPOST from "./AddressPOST";
+import AddressPUT from "./AddressPUT";
 
 export default function AddressBook() {
     const [addresses, setAddresses] = useState([]);
+    const [selectedAddress, setSelectedAddress] = useState(null);   
     const [addNewAddress, setAddNewAddress] = useState(false);
+    const [updateAddress, setUpdateAddress] = useState(false);
 
     const fetchAddress = async () => {
         try {
@@ -26,15 +29,15 @@ export default function AddressBook() {
 
   return (
     addNewAddress ? 
-        (
-            <AddressPOST setAddAddress={setAddNewAddress} />
-        ) 
+        <AddressPOST setAddAddress={setAddNewAddress}  />
         : 
-        (
-            <View style={{ flex: 1, flexDirection:'column', alignItems: "center" }}>
+    updateAddress ? 
+        <AddressPUT setUpdateAddress={setUpdateAddress} selectedAddress={selectedAddress}  />
+        :
+        <View style={{ flex: 1, flexDirection:'column', alignItems: "center" }}>
             <ScrollView style={{width:'100%', height: "100%", backgroundColor: "white"}}>
                 {addresses.map((address, index) => (
-                <TouchableOpacity key={index} style={{width:'100%', height: 100, backgroundColor: "white", padding:'3%', borderBottomWidth:1, borderColor:'gray'}} >
+                <TouchableOpacity onPress={() => { setSelectedAddress(address); setUpdateAddress(true); }} key={index} style={{width:'100%', height: 100, backgroundColor: "white", padding:'3%', borderBottomWidth:1, borderColor:'gray'}} >
                 <View style={{ flexDirection: 'column', width: '100%', height:'100%', justifyContent:'space-between'}}>
                     <View style={{ flexDirection: 'row', width: '100%' ,justifyContent:'flex-start'}}>
                         <Text style={{paddingRight:'3%' ,textAlign:'center' ,color: 'black', fontWeight: 'bold', fontSize: 18, borderRightWidth: 1 }}>{address.name}</Text>
@@ -56,6 +59,4 @@ export default function AddressBook() {
         </View>  
         )
 
-   
-  );
 }
