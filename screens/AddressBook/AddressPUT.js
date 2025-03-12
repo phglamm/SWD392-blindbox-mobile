@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, Alert } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, Alert, ScrollView } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import axios from "axios";
 import api from "../../api/api";
@@ -7,17 +7,13 @@ import api from "../../api/api";
 const AddressPUT = ({ setUpdateAddress, selectedAddress }) => {
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
-        phoneNumber: selectedAddress?.phoneNumber || "",
-        name: selectedAddress?.name || "",
-        provinceId: selectedAddress?.provinceId || null,
-        province: selectedAddress?.province || null,
-        districtId: selectedAddress?.districtId || null,
-        district: selectedAddress?.district || null,
-        wardCode: selectedAddress?.wardCode || null,
-        ward: selectedAddress?.ward || null,
-        addressDetail: selectedAddress?.addressDetail || "",
-        userId: selectedAddress?.userId || 20,
-        note: selectedAddress?.note || "",
+        addressId: selectedAddress.addressId || 0,
+        province: selectedAddress.province || "",
+        district: selectedAddress.district || "",
+        ward: selectedAddress.ward || "",
+        addressDetail: selectedAddress.addressDetail || "",
+        phoneNumber: selectedAddress.phoneNumber || "",
+        name: selectedAddress.name || ""
     });
 
     const [provinces, setProvinces] = useState([]);
@@ -81,13 +77,22 @@ const AddressPUT = ({ setUpdateAddress, selectedAddress }) => {
     };
 
     const handleChange = (name, value) => {
-        setFormData((prev) => ({ ...prev, [name]: value }));
+        setFormData((prev) => ({
+            ...prev,
+            [name]: value,
+            ...(name === "provinceId" ? { districtId: null, wardCode: null } : {}),
+            ...(name === "districtId" ? { wardCode: null } : {}),
+        }));
+
+        if (name === "provinceId") fetchDistricts(value);
+        if (name === "districtId") fetchWards(value);
     };
 
     const handleUpdateAddress = async () => {
         setLoading(true);
+        console.log(formData);
         try {
-            await api.put(`Address/${selectedAddress.id}`, formData);
+            await api.put(`Address`, formData);
             Alert.alert("Success", "Address updated successfully");
             setUpdateAddress(false);
         } catch (error) {
@@ -99,29 +104,81 @@ const AddressPUT = ({ setUpdateAddress, selectedAddress }) => {
     };
 
     return (
-        <View style={{ padding: 10 }}>
-            <Text style={{ fontSize: 20, marginBottom: 20, marginTop: 20, textAlign: 'center' }}>Update Address</Text>
-            <View style={{ marginBottom: 10, backgroundColor: "white", padding: '5%', borderRadius: 20 }}>
-                <Text style={{ fontSize: 20, marginBottom: 10, fontWeight: 'bold' }}>Contact Information</Text>
-                {[{ title: "Full Name", key: "name", placeholder: "Enter your name" },
-                  { title: "Phone Number", key: "phoneNumber", placeholder: "Enter your phone number" }]
-                .map(({ key, placeholder, title }) => (
-                    <View key={key} style={{ marginBottom: 10, padding: '1%' }}>
-                        <Text style={{ fontSize: 16 }}>{title}</Text>
-                        <TextInput
-                            style={{ borderBottomWidth: 0.5 }}
-                            placeholder={placeholder}
-                            value={formData[key]}
-                            onChangeText={(value) => handleChange(key, value)}
-                        />
-                    </View>
-                ))}
-            </View>
+        <ScrollView>
+            <View style={{ padding: 10 }}>
+                <Text style={{ fontSize: 20, marginBottom: 20, textAlign: 'center' }}>Update Address</Text>
 
-            <TouchableOpacity disabled={loading} style={{ backgroundColor: loading ? "gray" : "black", padding: 10, borderRadius: 5 }} onPress={handleUpdateAddress}>
-                <Text style={{ color: "white", textAlign: "center" }}>{loading ? "Updating..." : "Update Address"}</Text>
-            </TouchableOpacity>
-        </View>
+                {/* Contact Information */}
+                <View style={{ marginBottom: 10, backgroundColor: "white", padding: '5%', borderRadius: 20 }}>
+                    <Text style={{ fontSize: 20, marginBottom: 10, fontWeight: 'bold' }}>Contact Information</Text>
+                    {[{ title: "Full Name", key: "name", placeholder: "Enter your name" },
+                    { title: "Phone Number", key: "phoneNumber", placeholder: "Enter your phone number" }]
+                    .map(({ key, placeholder, title }) => (
+                        <View key={key} style={{ marginBottom: 10, padding: '1%' }}>
+                            <Text style={{ fontSize: 16 }}>{title}</Text>
+                            <TextInput
+                                style={{ borderBottomWidth: 0.5 }}
+                                placeholder={placeholder}
+                                value={formData[key]}
+                                onChangeText={(value) => handleChange(key, value)}
+                            />
+                        </View>
+                    ))}
+                </View>
+
+                {/* Address Information */}
+                <View style={{ marginBottom: 10, backgroundColor: "white", padding: '5%', borderRadius: 20 }}>
+                    <Text style={{ fontSize: 20, marginBottom: 10, fontWeight: 'bold' }}>Address Information</Text>
+
+                    <Text style={{ fontSize: 16 }}>Address Detail</Text>
+                    <TextInput
+                        style={{ borderBottomWidth: 0.5, marginBottom: 10 }}
+                        placeholder="Enter detailed address"
+                        value={formData.addressDetail}
+                        onChangeText={(value) => handleChange("addressDetail", value)}
+                    />
+
+                    <Text style={{ fontSize: 16, marginBottom:5 }}>Province</Text>
+                <View  style={{ marginBottom: 10, borderWidth: 1, borderColor: "gray" }}>
+                <Picker selectedValue={formData.provinceId} onValueChange={(value) => handleChange("provinceId", value)}>
+                        <Picker.Item label="Select Province" value={null} />
+                        {provinces.map((prov) => (<Picker.Item key={prov.ProvinceID} label={prov.ProvinceName} value={prov.ProvinceID} />))}
+                    </Picker>
+                </View>
+                    
+
+                    <Text style={{ fontSize: 16, marginBottom:5 }}>District</Text>
+                <View  style={{ marginBottom: 10, borderWidth: 1, borderColor: "gray" }}>
+                    <Picker selectedValue={formData.districtId} onValueChange={(value) => handleChange("districtId", value)}>
+                        <Picker.Item label="Select District" value={null} />
+                        {districts.map((dist) => (<Picker.Item key={dist.DistrictID} label={dist.DistrictName} value={dist.DistrictID} />))}
+                    </Picker>
+                </View>
+
+                    <Text style={{ fontSize: 16, marginBottom:5 }}>Ward</Text>
+                <View  style={{ marginBottom: 10, borderWidth: 1, borderColor: "gray" }}>
+                <Picker
+                    selectedValue={formData.ward}  // Make sure this matches the key in formData
+                    onValueChange={(value) => handleChange("ward", value)}
+                    enabled={!!formData.districtId}>
+                    <Picker.Item label="Select Ward" value={null} />
+                    {wards.map((ward) => (
+                        <Picker.Item key={ward.WardCode} label={ward.WardName} value={ward.WardCode} />
+                    ))}
+                </Picker>
+                </View>
+                    
+                </View>
+
+                <TouchableOpacity 
+                    disabled={loading} 
+                    style={{ backgroundColor: loading ? "gray" : "black", padding: 10, borderRadius: 5 }} 
+                    onPress={handleUpdateAddress}>
+                    <Text style={{ color: "white", textAlign: "center" }}>{loading ? "Updating..." : "Update Address"}</Text>
+                </TouchableOpacity>
+            </View>
+        </ScrollView>
+        
     );
 };
 

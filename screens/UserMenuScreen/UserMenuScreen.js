@@ -1,23 +1,24 @@
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, ScrollView } from "react-native";
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
-
+import Icon from 'react-native-vector-icons/AntDesign';
+import Icon2 from 'react-native-vector-icons/MaterialCommunityIcons';
 export default function UserMenuScreen() {
    const navigation = useNavigation();
     const menuItems = [
-      { title: "My Profile", link:"UserProfile" },
-      { title: "Address Book", link:"AddressBook" },
-      { title: "My Order", link:"ManageOrder" },
-      { title: "My Collection" },
-      { title: "Contact Us" },
-      { title: "Setting" },
+      { title: "My Profile", link:"UserProfile", icon:"profile" },
+      { title: "Address Book", link:"AddressBook", icon:"enviromento" },
+      { title: "My Order", link:"ManageOrder", icon:"save"  },
+      { title: "My Collection", icon:"book" },
+      { title: "Contact Us", icon:"customerservice" },
+      { title: "Setting", icon:"setting" },
     ];
   
     const trackingItems = [
-      { title: "Pending" },
-      { title: "Processing" },
-      { title: "Shipping" },
-      {title: "Rating"},
+      { title: "Pending", icon:"archive-clock-outline" },
+      { title: "Processing", icon:"package-variant-closed" },
+      { title: "Shipping", icon:"truck-fast-outline" },
+      {title: "Rating", icon:"star-circle-outline"},
   
   
     ];
@@ -28,14 +29,15 @@ export default function UserMenuScreen() {
     ];
   
     return (
-      <View style={{ flex: 1, gap: '3%', alignItems: "center", padding: '3%' }}>
+      <ScrollView>
+        <View style={{ flex: 1, gap: '3%', alignItems: "center", padding: '3%' }}>
 
-        <View style={{ height: "20%", backgroundColor: "black",flexDirection: 'row', 
+        <View style={{ height: 135, backgroundColor: "black",flexDirection: 'row', 
                         justifyContent: 'space-between'  ,borderWidth: 1, borderColor: "black", width: "100%",
                         shadowColor: 'black', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.25, shadowRadius: 3.84, elevation: 5, borderRadius: 8 
                         
-                         }}>
-         
+                        }}>
+        
             <View style={{ flex:1, flexDirection:'column',justifyContent:'space-between' ,width: '65%', height: '100%',  padding:'5%' }}>
               <View>
                 <Text style={{ color: 'red', fontWeight: 'bold', fontSize: 30 }}>Minh Luong</Text>
@@ -53,21 +55,22 @@ export default function UserMenuScreen() {
             </View>
               
           </View>
-        
-        <View style={{ height: "13%", width: "100%", backgroundColor:"white" ,justifyContent: 'center',shadowColor: 'black', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.25, shadowRadius: 3.84, elevation: 5, borderRadius: 8  }}>
+
+        <View style={{ height: 90, width: "100%", backgroundColor:"white" ,justifyContent: 'center',shadowColor: 'black', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.25, shadowRadius: 3.84, elevation: 5, borderRadius: 8  }}>
           <Text style={{ color: 'black', fontWeight:'bold', paddingTop:'3%', paddingLeft:'3%'}}>Tracking my Order</Text>
-  
-          <View style={{ flexDirection: 'row', width: '100%', height:'80%'}}>
+
+          <View style={{ flexDirection: 'row', width: '100%', height:'70%'}}>
             {trackingItems.map((item, index) => (
-              <TouchableOpacity key={index} style={{ marginTop:'1%', backgroundColor: 'white', height: '100%', width: '25%',  justifyContent: 'center', alignItems: 'center' }}>
+              <TouchableOpacity onPress={() => {navigation.navigate("ManageOrder", { orderStatus : item.title })}} key={index} style={{ marginTop:'1%', backgroundColor: 'white', height: '100%', width: '25%',  justifyContent: 'center', alignItems: 'center' }}>
+              <Icon2 name={item.icon} size={30}  />
                 <Text style={{ textAlign: 'center' }}>{item.title}</Text>
               </TouchableOpacity>
             ))}
-  
+
           </View>
         </View>
-  
-        <View style={{ flex: 1, flexDirection: "row", justifyContent: 'space-between', gap:'2%' ,flexWrap: "wrap", height: "20%", width: "100%", backgroundColor: "white", paddingBottom: '2%' }}>
+
+        <View style={{borderRadius: 8, flex: 1, flexDirection: "row", justifyContent: 'space-between', gap:'2%' ,flexWrap: "wrap", height: 250, width: "100%", backgroundColor: "white", paddingBottom: '2%' }}>
           {menuItems.map((item, index) => (
             <TouchableOpacity key={index} onPress={() => {
               if (item.link === "UserProfile") {
@@ -78,16 +81,17 @@ export default function UserMenuScreen() {
                 navigation.navigate(item.link);
               }
             }} style={{ backgroundColor: 'white', height: '33%', width: '49%', shadowColor: 'black', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.25, shadowRadius: 3.84, elevation: 5, borderRadius: 8,  justifyContent: 'center', alignItems: 'center' }}>
-              <Text style={{ textAlign: 'center', paddingTop: '5%' }}>{item.title}</Text>
+              <Icon name={item.icon} size={30}  />
+              <Text style={{ textAlign: 'center', paddingTop: '2%' }}>{item.title}</Text>
             </TouchableOpacity>
           ))}
         </View>
-  
-        <View style={{ height: "20%", width: "100%", backgroundColor: "white" }}>
+
+        <View style={{borderRadius: 8, height: 160, width: "100%", backgroundColor: "white", marginBottom: '20%', shadowColor: 'black', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.25, shadowRadius: 3.84, elevation: 5, borderRadius: 8 }}>
           <Text style={{ color: 'black', fontWeight: 'bold', paddingTop: '3%', paddingLeft: '3%', paddingBottom: '2%',  }}>
             Support
           </Text>
-  
+
           {supportItems.map((item, index) => (
             <TouchableOpacity key={index} style={{ flex:1, flexDirection:'row',justifyContent:'space-between', padding:'2%',backgroundColor: 'white', height: '33%', width: '100%', alignItems: 'center' }}>
               <Text style={{  }}>{item.title}</Text>
@@ -96,6 +100,8 @@ export default function UserMenuScreen() {
           ))
             }
         </View>
-      </View>
+        </View>
+      </ScrollView>
+      
     );
 }
