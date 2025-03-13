@@ -20,13 +20,24 @@ import ManageOrder from "../screens/ManageOrderScreen/ManageOrder";
 import AddressBook from "../screens/AddressBook/AddressBook";
 import SearchInput from "../components/SearchInput/SearchInput";
 import OrderDetailScreen from "./../screens/OrderDetailScreen/OrderDetailScreen";
-import BlogScreen from "../screens/BlogScreen/BlogScreen";
 import BlogDetailScreen from "../screens/BlogScreen/BlogDetailScreen";
+import BlogScreen from "./../screens/BlogScreen/BlogScreen";
 
 export default function Navigator() {
   const Tab = createBottomTabNavigator();
   const Stack = createNativeStackNavigator();
 
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const userData = await AsyncStorage.getItem("user");
+      if (userData) {
+        setUser(JSON.parse(userData));
+      }
+    };
+    fetchUser();
+  }, []);
   const HomeStack = () => {
     return (
       <Stack.Navigator>
@@ -43,6 +54,8 @@ export default function Navigator() {
           name="ProductDetailScreen"
           component={ProductDetailScreen}
         />
+        <Stack.Screen name="Blog" component={BlogScreen} />
+        <Stack.Screen name="BlogDetail" component={BlogDetailScreen} />
       </Stack.Navigator>
     );
   };
@@ -75,7 +88,7 @@ export default function Navigator() {
   };
   const UserStack = () => {
     return (
-      <Stack.Navigator>
+      <Stack.Navigator initialRouteName={user ? "UserMenu" : "Login"}>
         <Stack.Screen
           name="Login"
           component={LoginScreen}
@@ -170,11 +183,5 @@ export default function Navigator() {
     <NavigationContainer>
       <MainTab />
     </NavigationContainer>
-    // <NavigationContainer>
-    //  <Stack.Navigator initialRouteName="Blog">
-    //             <Stack.Screen name="Blog" component={BlogScreen} />
-    //             <Stack.Screen name="BlogDetail" component={BlogDetailScreen} />
-    //         </Stack.Navigator>
-    // </NavigationContainer>
   );
 }

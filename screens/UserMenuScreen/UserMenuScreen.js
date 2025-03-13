@@ -1,4 +1,10 @@
-import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  StyleSheet,
+} from "react-native";
 import React, { useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/AntDesign";
@@ -41,12 +47,12 @@ export default function UserMenuScreen() {
 
   const handleLogout = async () => {
     // Add your logout logic here
+    await AsyncStorage.removeItem("accessToken");
+    await AsyncStorage.removeItem("user");
     navigation.reset({
       index: 0,
       routes: [{ name: "Login" }],
     });
-    await AsyncStorage.removeItem("accessToken");
-    await AsyncStorage.removeItem("user");
   };
 
   return (
@@ -199,7 +205,6 @@ const styles = StyleSheet.create({
     color: "black",
     fontWeight: "bold",
     paddingBottom: "1%",
-
   },
   trackingItems: {
     flexDirection: "row",
