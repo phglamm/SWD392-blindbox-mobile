@@ -259,7 +259,7 @@ const styles = StyleSheet.create({
   },
   orderContainer: {
     width: "100%",
-    backgroundColor: "white",
+
     borderRadius: 20,
     marginBottom: 10,
   },
@@ -277,6 +277,9 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   orderDetails: {
+    backgroundColor: "white",
+    borderBottomRightRadius: 20,
+    borderBottomLeftRadius: 20,
     flexDirection: "column",
   },
   orderInfo: {
@@ -301,7 +304,7 @@ const styles = StyleSheet.create({
   },
   statusTextContainer: {
     flexDirection: "column",
-    width: "50%",
+    width: 150,
   },
   deliveryAddress: {
     padding: "3%",
@@ -330,7 +333,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
   orderDetailContainer: {
-    marginTop: 10,
+    marginTop: 20,
     width: "100%",
     backgroundColor: "white",
     borderRadius: 20,
@@ -356,7 +359,7 @@ const styles = StyleSheet.create({
     borderColor: "gray",
     alignItems: "center",
     paddingBottom: 10,
-    height: 100,
+    
   },
   orderItemImageContainer: {
     width: "30%",
@@ -370,7 +373,6 @@ const styles = StyleSheet.create({
   },
   orderItemInfo: {
     width: "30%",
-    height: "100%",
     flexDirection: "column",
   },
   orderItemName: {
@@ -387,7 +389,6 @@ const styles = StyleSheet.create({
   },
   orderItemPriceContainer: {
     width: "40%",
-    height: "100%",
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
@@ -418,7 +419,6 @@ const styles = StyleSheet.create({
   },
   orderActions: {
     width: "100%",
-    height: 50,
     flexDirection: "row",
     justifyContent: "flex-end",
     gap: "2%",
@@ -428,7 +428,7 @@ const styles = StyleSheet.create({
   },
   rateButton: {
     width: "20%",
-    height: "100%",
+    height: 40,
     backgroundColor: "black",
     justifyContent: "center",
     alignItems: "center",
@@ -436,7 +436,7 @@ const styles = StyleSheet.create({
   },
   returnButton: {
     width: "60%",
-    height: "100%",
+    height: 40,
     backgroundColor: "red",
     justifyContent: "center",
     alignItems: "center",
@@ -445,7 +445,7 @@ const styles = StyleSheet.create({
   cancelButton: {
     backgroundColor: "red",
     width: "40%",
-    height: "100%",
+    height: 40,
     justifyContent: "center",
     borderRadius: 5,
   },

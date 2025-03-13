@@ -1,9 +1,10 @@
-import { View, Text, TouchableOpacity, ScrollView } from "react-native";
+import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/AntDesign";
 import Icon2 from "react-native-vector-icons/MaterialCommunityIcons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+
 export default function UserMenuScreen() {
   const navigation = useNavigation();
   const menuItems = [
@@ -50,94 +51,28 @@ export default function UserMenuScreen() {
 
   return (
     <ScrollView>
-      <View style={{ flex: 1, gap: "3%", alignItems: "center", padding: "3%" }}>
-        <View
-          style={{
-            height: 135,
-            backgroundColor: "black",
-            flexDirection: "row",
-            justifyContent: "space-between",
-            borderWidth: 1,
-            borderColor: "black",
-            width: "100%",
-            shadowColor: "black",
-            shadowOffset: { width: 0, height: 2 },
-            shadowOpacity: 0.25,
-            shadowRadius: 3.84,
-            elevation: 5,
-            borderRadius: 8,
-          }}
-        >
-          <View
-            style={{
-              flex: 1,
-              flexDirection: "column",
-              justifyContent: "space-between",
-              width: "65%",
-              height: "100%",
-              padding: "5%",
-            }}
-          >
+      <View style={styles.container}>
+        <View style={styles.userInfoContainer}>
+          <View style={styles.userInfo}>
             <View>
               {user ? (
                 <>
-                  <Text
-                    style={{ color: "red", fontWeight: "bold", fontSize: 30 }}
-                  >
-                    {user.username}
-                  </Text>
-                  <Text style={{ color: "white", fontSize: 18 }}>
-                    {user.phone}
-                  </Text>
+                  <Text style={styles.username}>{user.username}</Text>
+                  <Text style={styles.userPhone}>{user.phone}</Text>
                 </>
               ) : (
                 <></>
               )}
             </View>
-
             <View>
-              <Text
-                style={{
-                  color: "black",
-                  padding: "1%",
-                  textAlign: "center",
-                  borderRadius: 15,
-                  backgroundColor: "gray",
-                  fontSize: 15,
-                }}
-              >
-                Mystery Minis Member
-              </Text>
+              <Text style={styles.membership}>Mystery Minis Member</Text>
             </View>
           </View>
         </View>
 
-        <View
-          style={{
-            height: 90,
-            width: "100%",
-            backgroundColor: "white",
-            justifyContent: "center",
-            shadowColor: "black",
-            shadowOffset: { width: 0, height: 2 },
-            shadowOpacity: 0.25,
-            shadowRadius: 3.84,
-            elevation: 5,
-            borderRadius: 8,
-          }}
-        >
-          <Text
-            style={{
-              color: "black",
-              fontWeight: "bold",
-              paddingTop: "3%",
-              paddingLeft: "3%",
-            }}
-          >
-            Tracking my Order
-          </Text>
-
-          <View style={{ flexDirection: "row", width: "100%", height: "70%" }}>
+        <View style={styles.trackingContainer}>
+          <Text style={styles.trackingTitle}>Tracking my Order</Text>
+          <View style={styles.trackingItems}>
             {trackingItems.map((item, index) => (
               <TouchableOpacity
                 onPress={() => {
@@ -146,36 +81,16 @@ export default function UserMenuScreen() {
                   });
                 }}
                 key={index}
-                style={{
-                  marginTop: "1%",
-                  backgroundColor: "white",
-                  height: "100%",
-                  width: "25%",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
+                style={styles.trackingItem}
               >
                 <Icon2 name={item.icon} size={30} />
-                <Text style={{ textAlign: "center" }}>{item.title}</Text>
+                <Text style={styles.trackingItemText}>{item.title}</Text>
               </TouchableOpacity>
             ))}
           </View>
         </View>
 
-        <View
-          style={{
-            borderRadius: 8,
-            flex: 1,
-            flexDirection: "row",
-            justifyContent: "space-between",
-            gap: "2%",
-            flexWrap: "wrap",
-            height: 250,
-            width: "100%",
-            backgroundColor: "white",
-            paddingBottom: "2%",
-          }}
-        >
+        <View style={styles.menuContainer}>
           {menuItems.map((item, index) => (
             <TouchableOpacity
               key={index}
@@ -190,55 +105,16 @@ export default function UserMenuScreen() {
                   navigation.navigate(item.link);
                 }
               }}
-              style={{
-                backgroundColor: "white",
-                height: "33%",
-                width: "49%",
-                shadowColor: "black",
-                shadowOffset: { width: 0, height: 2 },
-                shadowOpacity: 0.25,
-                shadowRadius: 3.84,
-                elevation: 5,
-                borderRadius: 8,
-                justifyContent: "center",
-                alignItems: "center",
-              }}
+              style={styles.menuItem}
             >
               <Icon name={item.icon} size={30} />
-              <Text style={{ textAlign: "center", paddingTop: "2%" }}>
-                {item.title}
-              </Text>
+              <Text style={styles.menuItemText}>{item.title}</Text>
             </TouchableOpacity>
           ))}
         </View>
 
-        <View
-          style={{
-            borderRadius: 8,
-            height: 160,
-            width: "100%",
-            backgroundColor: "white",
-            marginBottom: "20%",
-            shadowColor: "black",
-            shadowOffset: { width: 0, height: 2 },
-            shadowOpacity: 0.25,
-            shadowRadius: 3.84,
-            elevation: 5,
-            borderRadius: 8,
-          }}
-        >
-          <Text
-            style={{
-              color: "black",
-              fontWeight: "bold",
-              paddingTop: "3%",
-              paddingLeft: "3%",
-              paddingBottom: "2%",
-            }}
-          >
-            Support
-          </Text>
-
+        <View style={styles.supportContainer}>
+          <Text style={styles.supportTitle}>Support</Text>
           {supportItems.map((item, index) => (
             <TouchableOpacity
               key={index}
@@ -247,19 +123,10 @@ export default function UserMenuScreen() {
                   handleLogout();
                 }
               }}
-              style={{
-                flex: 1,
-                flexDirection: "row",
-                justifyContent: "space-between",
-                padding: "2%",
-                backgroundColor: "white",
-                height: "33%",
-                width: "100%",
-                alignItems: "center",
-              }}
+              style={styles.supportItem}
             >
-              <Text style={{}}>{item.title}</Text>
-              <Text style={{ textAlign: "right" }}> {">"} </Text>
+              <Text>{item.title}</Text>
+              <Text style={styles.supportItemArrow}> {">"} </Text>
             </TouchableOpacity>
           ))}
         </View>
@@ -267,3 +134,147 @@ export default function UserMenuScreen() {
     </ScrollView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    gap: "3%",
+    alignItems: "center",
+    padding: "3%",
+  },
+  userInfoContainer: {
+    height: 145,
+    backgroundColor: "black",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    borderWidth: 1,
+    borderColor: "black",
+    width: "100%",
+    shadowColor: "black",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    borderRadius: 8,
+  },
+  userInfo: {
+    flex: 1,
+    flexDirection: "column",
+    justifyContent: "space-between",
+    width: "65%",
+    height: "100%",
+    padding: "5%",
+  },
+  username: {
+    color: "red",
+    fontWeight: "bold",
+    fontSize: 30,
+  },
+  userPhone: {
+    color: "white",
+    fontSize: 18,
+  },
+  membership: {
+    color: "black",
+    padding: "1%",
+    textAlign: "center",
+    borderRadius: 15,
+    backgroundColor: "gray",
+    fontSize: 15,
+  },
+  trackingContainer: {
+    height: 100,
+    width: "100%",
+    backgroundColor: "white",
+    justifyContent: "center",
+    shadowColor: "black",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    borderRadius: 8,
+    padding: "3%",
+  },
+  trackingTitle: {
+    color: "black",
+    fontWeight: "bold",
+    paddingBottom: "1%",
+
+  },
+  trackingItems: {
+    flexDirection: "row",
+    width: "100%",
+    height: "70%",
+  },
+  trackingItem: {
+    marginTop: "1%",
+    height: "100%",
+    width: "25%",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  trackingItemText: {
+    textAlign: "center",
+  },
+  menuContainer: {
+    borderRadius: 8,
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    gap: "2%",
+    flexWrap: "wrap",
+
+    width: "100%",
+    backgroundColor: "white",
+    paddingBottom: "2%",
+  },
+  menuItem: {
+    backgroundColor: "white",
+    height: 100,
+    width: "49%",
+    shadowColor: "black",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    borderRadius: 8,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  menuItemText: {
+    textAlign: "center",
+    paddingTop: "2%",
+  },
+  supportContainer: {
+    borderRadius: 8,
+    height: 160,
+    width: "100%",
+    backgroundColor: "white",
+    marginBottom: "20%",
+    shadowColor: "black",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    borderRadius: 8,
+  },
+  supportTitle: {
+    color: "black",
+    fontWeight: "bold",
+    paddingTop: "3%",
+    paddingLeft: "3%",
+    paddingBottom: "2%",
+  },
+  supportItem: {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    padding: "2%",
+    height: "33%",
+    width: "100%",
+    alignItems: "center",
+  },
+  supportItemArrow: {
+    textAlign: "right",
+  },
+});

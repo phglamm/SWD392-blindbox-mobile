@@ -34,7 +34,7 @@ export default function LoginScreen() {
       });
       console.log(response.data);
       const user = response.data.user;
-      if (user.roleId === 3) {
+      if (user.roleId === 1 || user.roleId === 3 ) {
         AsyncStorage.setItem("accessToken", response.data.token);
         AsyncStorage.setItem("user", JSON.stringify(user));
         Toast.show({
@@ -46,7 +46,7 @@ export default function LoginScreen() {
           index: 0,
           routes: [{ name: "UserMenu" }],
         });
-      } else if (user.roleId === 1 || user.roleId === 2) {
+      } else if ( user.roleId === 2) {
         Toast.show({
           type: "error",
           text1: "Your role is not supported yet",

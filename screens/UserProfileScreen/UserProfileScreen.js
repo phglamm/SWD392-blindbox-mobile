@@ -1,4 +1,4 @@
-import { View, Text, TextInput, TouchableOpacity, Button } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, Button, StyleSheet } from "react-native";
 import React, { useEffect, useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import { useNavigation } from "@react-navigation/native";
@@ -78,114 +78,34 @@ export default function UserProfileScreen({ route }) {
   };
 
   return (
-    <View style={{ flex: 1, gap: "3%", alignItems: "center", padding: "3%" }}>
-      <View
-        style={{
-          height: "20%",
-          backgroundColor: "black",
-          flexDirection: "row",
-          justifyContent: "space-between",
-          borderWidth: 1,
-          borderColor: "black",
-          width: "100%",
-          shadowColor: "black",
-          shadowOffset: { width: 0, height: 2 },
-          shadowOpacity: 0.25,
-          shadowRadius: 3.84,
-          elevation: 5,
-          borderRadius: 8,
-        }}
-      >
-        <View
-          style={{
-            flex: 1,
-            flexDirection: "column",
-            justifyContent: "space-between",
-            width: "65%",
-            height: "100%",
-            padding: "5%",
-          }}
-        >
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <View style={styles.headerLeft}>
           <View>
-            <Text style={{ color: "red", fontWeight: "bold", fontSize: 30 }}>
-              {userData.fullname}
-            </Text>
-            <Text style={{ color: "white", fontSize: 18 }}>
-              {userData.phone}
-            </Text>
+            <Text style={styles.fullname}>{userData.fullname}</Text>
+            <Text style={styles.phone}>{userData.phone}</Text>
           </View>
           <View>
-            <Text
-              style={{
-                color: "black",
-                padding: "1%",
-                textAlign: "center",
-                borderRadius: 15,
-                backgroundColor: "gray",
-                fontSize: 15,
-              }}
-            >
-              Mystery Minis Member
-            </Text>
+            <Text style={styles.memberStatus}>Mystery Minis Member</Text>
           </View>
         </View>
-        <View
-          style={{
-            width: "35%",
-            height: "100%",
-            backgroundColor: "red",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <Text
-            style={{
-              color: "black",
-              fontWeight: "bold",
-              backgroundColor: "red",
-            }}
-          >
-            Avatar
-          </Text>
+        <View style={styles.headerRight}>
+          <Text style={styles.avatarText}>Avatar</Text>
         </View>
       </View>
 
-      <View
-        style={{
-          height: "60%",
-          width: "100%",
-          backgroundColor: "white",
-          justifyContent: "center",
-          shadowColor: "black",
-          shadowOffset: { width: 0, height: 2 },
-          shadowOpacity: 0.25,
-          shadowRadius: 3.84,
-          elevation: 5,
-          borderRadius: 8,
-          padding: "5%",
-        }}
-      >
+      <View style={styles.profileInfo}>
         {userProfileInfo.map((info, index) => (
-          <View
-            key={index}
-            style={{
-              flex: 1,
-              flexDirection: "row",
-              borderBottomWidth: 1,
-              justifyContent: "space-between",
-              marginBottom: 10,
-              width: "100%",
-            }}
-          >
-            <View style={{ width: "25%", justifyContent: "center" }}>
-              <Text style={{ fontWeight: "bold" }}>{info.title}:</Text>
+          <View key={index} style={styles.profileInfoRow}>
+            <View style={styles.profileInfoTitle}>
+              <Text style={styles.profileInfoTitleText}>{info.title}:</Text>
             </View>
-            <View style={{ flex: 1, width: "75%", justifyContent: "center" }}>
+            <View style={styles.profileInfoValue}>
               {isEditing ? (
                 info.key === "gender" ? (
                   <Picker
                     selectedValue={info.value === true ? "true" : "false"}
-                    style={{ height: 50, width: 150 }}
+                    style={styles.picker}
                     onValueChange={(itemValue) =>
                       handleInputChange(info.key, itemValue === "true")
                     }
@@ -195,14 +115,14 @@ export default function UserProfileScreen({ route }) {
                   </Picker>
                 ) : (
                   <TextInput
-                    style={{ borderBottomWidth: 1, marginLeft: 10 }}
+                    style={styles.textInput}
                     value={info.value}
                     onChangeText={(text) => handleInputChange(info.key, text)}
                   />
                 )
               ) : (
-                <View style={{}}>
-                  <Text style={{ textAlign: "right" }}>
+                <View>
+                  <Text style={styles.profileInfoText}>
                     {info.key === "gender"
                       ? info.value === true
                         ? "Male"
@@ -216,14 +136,7 @@ export default function UserProfileScreen({ route }) {
         ))}
       </View>
 
-      <View
-        style={{
-          height: "10%",
-          width: "100%",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
+      <View style={styles.buttonContainer}>
         <Button
           color="black"
           title={isEditing ? "Save Profile" : "Update Profile"}
@@ -233,3 +146,114 @@ export default function UserProfileScreen({ route }) {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    gap: "3%",
+    alignItems: "center",
+    padding: "3%",
+  },
+  header: {
+    height: "20%",
+    backgroundColor: "black",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    borderWidth: 1,
+    borderColor: "black",
+    width: "100%",
+    shadowColor: "black",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    borderRadius: 8,
+  },
+  headerLeft: {
+    flex: 1,
+    flexDirection: "column",
+    justifyContent: "space-between",
+    width: "65%",
+    height: "100%",
+    padding: "5%",
+  },
+  fullname: {
+    color: "red",
+    fontWeight: "bold",
+    fontSize: 30,
+  },
+  phone: {
+    color: "white",
+    fontSize: 18,
+  },
+  memberStatus: {
+    color: "black",
+    padding: "1%",
+    textAlign: "center",
+    borderRadius: 15,
+    backgroundColor: "gray",
+    fontSize: 15,
+  },
+  headerRight: {
+    width: "35%",
+    height: "100%",
+    backgroundColor: "red",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  avatarText: {
+    color: "black",
+    fontWeight: "bold",
+    backgroundColor: "red",
+  },
+  profileInfo: {
+    height: "60%",
+    width: "100%",
+    backgroundColor: "white",
+    justifyContent: "center",
+    shadowColor: "black",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    borderRadius: 8,
+    padding: "5%",
+  },
+  profileInfoRow: {
+    flex: 1,
+    flexDirection: "row",
+    borderBottomWidth: 1,
+    justifyContent: "space-between",
+    marginBottom: 10,
+    width: "100%",
+  },
+  profileInfoTitle: {
+    width: "25%",
+    justifyContent: "center",
+  },
+  profileInfoTitleText: {
+    fontWeight: "bold",
+  },
+  profileInfoValue: {
+    flex: 1,
+    width: "75%",
+    justifyContent: "center",
+  },
+  picker: {
+    height: 50,
+    width: 150,
+  },
+  textInput: {
+    borderBottomWidth: 1,
+    marginLeft: 10,
+  },
+  profileInfoText: {
+    textAlign: "right",
+  },
+  buttonContainer: {
+    height: "10%",
+    width: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+});
