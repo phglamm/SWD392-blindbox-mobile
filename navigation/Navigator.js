@@ -16,9 +16,10 @@ import FavoritesScreen from "../screens/FavoritesScreen/FavoritesScreen";
 import CheckOutScreen from "./../screens/CheckOutScreen/CheckOutScreen";
 import OrderSuccessScreen from "../screens/OrderSuccessScreen/OrderSuccessScreen";
 import UserMenuScreen from "../screens/UserMenuScreen/UserMenuScreen";
-import ManageOrder from "../screens/ManageOrder/ManageOrder";
+import ManageOrder from "../screens/ManageOrderScreen/ManageOrder";
 import AddressBook from "../screens/AddressBook/AddressBook";
 import Icon from 'react-native-vector-icons/AntDesign';
+import OrderDetailScreen from "../screens/OrderDetailScreen/OrderDetailScreen";
 
 export default function Navigator() {
   const Tab = createBottomTabNavigator();
@@ -103,6 +104,7 @@ export default function Navigator() {
         <Stack.Screen name="Register" component={RegisterScreen} /> 
         <Stack.Screen name="UserProfile" component={UserProfileScreen} />
         <Stack.Screen name="ManageOrder" component={ManageOrder} />
+        <Stack.Screen name="OrderDetail" component={OrderDetailScreen} />
         <Stack.Screen name="AddressBook" component={AddressBook} />
         <Stack.Screen
           name="Your Favorites Box"
