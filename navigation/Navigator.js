@@ -16,9 +16,10 @@ import CheckOutScreen from "./../screens/CheckOutScreen/CheckOutScreen";
 import OrderSuccessScreen from "../screens/OrderSuccessScreen/OrderSuccessScreen";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import UserMenuScreen from "../screens/UserMenuScreen/UserMenuScreen";
-import ManageOrder from "../screens/ManageOrder/ManageOrder";
+import ManageOrder from "../screens/ManageOrderScreen/ManageOrder";
 import AddressBook from "../screens/AddressBook/AddressBook";
 import SearchInput from "../components/SearchInput/SearchInput";
+import OrderDetailScreen from "./../screens/OrderDetailScreen/OrderDetailScreen";
 
 export default function Navigator() {
   const Tab = createBottomTabNavigator();
@@ -96,6 +97,11 @@ export default function Navigator() {
         <Stack.Screen
           name="ManageOrder"
           component={ManageOrder}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="OrderDetail"
+          component={OrderDetailScreen}
           options={{ headerShown: false }}
         />
         <Stack.Screen
