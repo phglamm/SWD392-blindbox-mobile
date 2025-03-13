@@ -1,15 +1,31 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { TextInput, Button, Text } from "react-native-paper";
 import { FontAwesome } from "@expo/vector-icons";
-import Toast from "react-native-toast-message";
 import api from "../../api/api";
+import Toast from "react-native-toast-message";
+import { useNavigation } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export default function LoginScreen({ navigation }) {
+export default function LoginScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [secureText, setSecureText] = useState(true);
+  const navigation = useNavigation();
+  const [user, setUser] = useState(null);
 
+  useEffect(() => {
+    const fetchUser = async () => {
+      const userData = await AsyncStorage.getItem("user");
+      if (userData) {
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "UserMenu" }],
+        });
+      }
+    };
+    fetchUser();
+  }, []);
   const handleLogin = async () => {
     try {
       const response = await api.post("Account/login", {
@@ -17,19 +33,32 @@ export default function LoginScreen({ navigation }) {
         password,
       });
       console.log(response.data);
-      AsyncStorage.setItem("accessToken", response.data.token);
-      AsyncStorage.setItem("user", JSON.stringify(response.data.user));
-      Toast.show({
-        text1: "Success",
-        text2: "Login successful",
-        type: "success",
-      });
+      const user = response.data.user;
+      if (user.roleId === 3) {
+        AsyncStorage.setItem("accessToken", response.data.token);
+        AsyncStorage.setItem("user", JSON.stringify(user));
+        Toast.show({
+          type: "success",
+          text1: "Login Success",
+          visibilityTime: 2000,
+        });
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "UserMenu" }],
+        });
+      } else if (user.roleId === 1 || user.roleId === 2) {
+        Toast.show({
+          type: "error",
+          text1: "Your role is not supported yet",
+          visibilityTime: 2000,
+        });
+      }
     } catch (error) {
       console.log(error.response.data);
       Toast.show({
-        text1: "Error",
-        text2: error.response.data.message,
         type: "error",
+        text1: error.response.data,
+        visibilityTime: 2000,
       });
     }
   };
@@ -100,14 +129,20 @@ export default function LoginScreen({ navigation }) {
       </View>
 
       {/* Sign Up Link */}
-      <Text style={styles.registerText}>
-        Create An Account{" "}
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Text style={styles.registerText}>Create An Account, </Text>
         <TouchableOpacity onPress={() => navigation.navigate("Register")}>
           <Text style={{ fontWeight: "bold", color: "rgb(248, 150, 150)" }}>
             Sign Up
           </Text>
         </TouchableOpacity>
-      </Text>
+      </View>
     </View>
   );
 }
@@ -165,6 +200,6 @@ const styles = StyleSheet.create({
   },
   registerText: {
     color: "#666",
-    marginTop: 10,
+    // marginTop: 10,
   },
 });

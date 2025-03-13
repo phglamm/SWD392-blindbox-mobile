@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import api from "../../api/api";
 import { useNavigation } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function ManageOrder({ route }) {
   const [selectedStatus, setSelectedStatus] = useState(0);
@@ -16,8 +17,6 @@ export default function ManageOrder({ route }) {
   const [loadingCancel, setLoadingCancel] = useState(false);
   const selectedOrderStatus = route.params;
   const navigation = useNavigation();
-
-
 
   const cancelOrders = async (orderId) => {
     setLoadingCancel(true);
@@ -65,31 +64,45 @@ export default function ManageOrder({ route }) {
       .replace(",", "");
   };
 
-  const fetchOrders = async () => {
-    try {
-      const response = await api.get("Order");
-      let fetchedOrders = response.data;
+  const [user, setUser] = useState(null);
 
-      if (selectedStatus !== 0) {
-        const statusTitle = orderStatus[selectedStatus].title;
-        fetchedOrders = fetchedOrders.filter(
-          (order) =>
-            order.orderStatusDetailsSimple?.slice(-1)[0]?.statusName ===
-            statusTitle
-        );
+  useEffect(() => {
+    const fetchUser = async () => {
+      const userData = await AsyncStorage.getItem("user");
+      if (userData) {
+        setUser(JSON.parse(userData));
       }
-      fetchedOrders.sort(
-        (a, b) => new Date(b.orderCreatedAt) - new Date(a.orderCreatedAt)
-      );
-      setOrders(fetchedOrders);
-    } catch (error) {
-      console.error(error);
+    };
+    fetchUser();
+  }, []);
+
+  const fetchOrders = async () => {
+    if (user) {
+      try {
+        const response = await api.get(`Order?userId=${user.userId}`);
+        let fetchedOrders = response.data;
+
+        if (selectedStatus !== 0) {
+          const statusTitle = orderStatus[selectedStatus].title;
+          fetchedOrders = fetchedOrders.filter(
+            (order) =>
+              order.orderStatusDetailsSimple?.slice(-1)[0]?.statusName ===
+              statusTitle
+          );
+        }
+        fetchedOrders.sort(
+          (a, b) => new Date(b.orderCreatedAt) - new Date(a.orderCreatedAt)
+        );
+        setOrders(fetchedOrders);
+      } catch (error) {
+        console.error(error);
+      }
     }
   };
 
   useEffect(() => {
     fetchOrders();
-  }, [selectedStatus]);
+  }, [user, selectedStatus]);
 
   return (
     <View style={styles.container}>
