@@ -31,7 +31,7 @@ export default function ManageOrder({ route }) {
       setLoadingCancel(false);
     }
   };
-  
+
   useEffect(() => {
     if (selectedOrderStatus) {
       const statusIndex = orderStatus.findIndex(
@@ -292,7 +292,6 @@ const styles = StyleSheet.create({
   },
   orderDetails: {
     width: "100%",
-    height: 220,
     padding: "4%",
   },
   orderItem: {
@@ -301,11 +300,11 @@ const styles = StyleSheet.create({
   },
   orderItemRow: {
     flexDirection: "row",
-    height: "50%",
+
   },
   orderItemImageContainer: {
     width: "30%",
-    height: "100%",
+    height: 80,
     marginRight: "3%",
   },
   orderItemImage: {
