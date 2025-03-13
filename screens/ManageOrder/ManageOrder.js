@@ -4,18 +4,25 @@ import api from "../../api/api";
 
 export default function ManageOrder({route}) {
     const [selectedStatus, setSelectedStatus] = useState(0);
-    const userId = route.params;
-    console.log(userId.userId);
+    const selectedOrderStatus = route.params;
+    console.log(selectedOrderStatus);
+
+    useEffect(() => {
+        if (selectedOrderStatus) {
+            const statusIndex = orderStatus.findIndex(status => status.title === selectedOrderStatus.orderStatus);
+            setSelectedStatus(statusIndex !== -1 ? statusIndex : 0);
+        }
+    }, [selectedOrderStatus]);
+
     const [orders, setOrders] = useState([]);
     const orderStatus = [
         {title: "All Order"},
         {title: "Pending"},
         {title: "Processing"},
         {title: "Shipping"},
-        {title: "Completed"},
+        {title: "Arrived"},
         {title: "Cancelled"},
-        {title: "Cancelled"},
-        {title: "Cancelled"},
+        {title: "Return Refund"},
     ];
 
     const formatDate = (dateString) => {
@@ -42,7 +49,7 @@ export default function ManageOrder({route}) {
           }
           fetchedOrders.sort((a, b) => new Date(b.orderCreatedAt) - new Date(a.orderCreatedAt));
           setOrders(fetchedOrders);
-          console.log(fetchedOrders);
+
         } catch (error) {
           console.error(error);
         }

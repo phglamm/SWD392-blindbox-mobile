@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, Alert } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, Alert, ScrollView } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import axios from "axios";
 import api from "../../api/api";
@@ -107,7 +107,8 @@ const AddressPOST = ({ setAddAddress }) => {
   };
 
   return (
-    <View style={{ padding: 10 }}>
+    <ScrollView>
+ <View style={{ padding: 10 }}>
       <Text style={{ fontSize: 20, marginBottom: 20 ,marginTop:20 , textAlign:'center' }}>Add New Address</Text>
       <View style={{ marginBottom: 10, backgroundColor: "white", padding: '5%', borderRadius: 20 }}> 
         <Text style={{ fontSize: 20, marginBottom: 10, fontWeight:'bold' }}>Contact Information</Text>
@@ -198,6 +199,8 @@ const AddressPOST = ({ setAddAddress }) => {
         <Text style={{ color: "white", textAlign: "center" }}>{loading ? "Saving..." : "Save Changes"}</Text>
       </TouchableOpacity>
     </View>
+    </ScrollView>
+   
   );
 };
 
