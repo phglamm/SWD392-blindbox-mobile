@@ -1,18 +1,22 @@
 import React, { useEffect, useState } from "react";
-import { ScrollView, View, Text, Image, StyleSheet, TouchableOpacity, ActivityIndicator } from "react-native";
-import axios from "axios"; // Import axios
+import { ScrollView, View, Text, Image, StyleSheet, TouchableOpacity, ActivityIndicator, Button } from "react-native";
+import axios from "axios"; 
 import api from "../../api/api";
+import { useNavigation } from "@react-navigation/native";
+
 
 const BlogScreen = () => {
-    const [blogPosts, setBlogPosts] = useState([]); // State lưu bài viết
-    const [loading, setLoading] = useState(true); // Trạng thái loading
-    const [error, setError] = useState(null); // Trạng thái lỗi
+    const [blogPosts, setBlogPosts] = useState([]); 
+    const [loading, setLoading] = useState(true); 
+    const [error, setError] = useState(null); 
+    const [currentPage, setCurrentPage] = useState(1); 
+    const postsPerPage = 5; 
 
-    // 🔥 Hàm fetch dữ liệu blog post trực tiếp trong BlogScreen.js
+    
     const fetchBlogPosts = async () => {
         try {
             const response = await api.get("BlogPost");
-            setBlogPosts(response.data); // Lưu dữ liệu vào state
+            setBlogPosts(response.data); 
         } catch (err) {
             setError(err);
             console.error("Error fetching blog posts:", err);
@@ -21,16 +25,21 @@ const BlogScreen = () => {
         }
     };
 
-    // 🟢 Gọi API khi màn hình được load
+    
     useEffect(() => {
         fetchBlogPosts();
     }, []);
+    const navigation = useNavigation(); 
 
-    // 🟢 Xử lý khi người dùng bấm vào một bài viết
-    const handleCardPress = (id) => {
-        console.log(`Card clicked! Blog ID: ${id}`);
-        // Điều hướng đến màn hình chi tiết nếu cần
+
+    const handleCardPress = (blogPostId) => {
+        console.log(blogPostId)
+        navigation.navigate("BlogDetail", { blogId: blogPostId });
     };
+
+    const indexOfLastPost = currentPage * postsPerPage;
+    const indexOfFirstPost = indexOfLastPost - postsPerPage;
+    const currentPosts = blogPosts.slice(indexOfFirstPost, indexOfLastPost);
 
     return (
         <ScrollView contentContainerStyle={styles.container}>
@@ -39,25 +48,43 @@ const BlogScreen = () => {
                 <Text style={styles.overlayText}>TOY DAYS</Text>
             </View>
 
-            {/* Hiển thị loading nếu dữ liệu chưa tải xong */}
             {loading ? (
                 <ActivityIndicator size="large" color="rgb(248, 150, 150)" />
             ) : error ? (
                 <Text style={styles.errorText}>Error loading blog posts.</Text>
             ) : (
-                <View style={styles.blogList}>
-                    {blogPosts.map((post) => (
-                        <TouchableOpacity key={post.id} style={styles.card} onPress={() => handleCardPress(post.id)}>
-                            <View style={styles.imageContainer}>
-                                <Image source={{ uri: post.blogPostImage }} style={styles.mainImage} />
-                            </View>
-                            <View style={styles.textContainer}>
-                                <Text style={styles.heading}>{post.blogPostTitle}</Text>
-                                <Text style={styles.paragraph}>{post.description}</Text>
-                            </View>
-                        </TouchableOpacity>
-                    ))}
-                </View>
+                <>
+                    <View style={styles.blogList}>
+                        {currentPosts.map((post) => (
+                            <TouchableOpacity key={post.blogPostId} style={styles.card} onPress={() => handleCardPress(post.blogPostId)}>
+                                <View style={styles.imageContainer}>
+                                    <Image source={{ uri: post.blogPostImage }} style={styles.mainImage} />
+                                </View>
+                                <View style={styles.textContainer}>
+                                    <Text style={styles.heading}>{post.blogPostTitle}</Text>
+                                    <Text style={styles.paragraph}>{post.description}</Text>
+                                </View>
+                            </TouchableOpacity>
+                        ))}
+                    </View>
+
+                    <View style={styles.pagination}>
+    <Button
+        title="Previous"
+        onPress={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+        disabled={currentPage === 1}
+        color="#FFAEB9"
+    />
+    <Text style={styles.pageNumber}>Page {currentPage}</Text>
+    <Button
+        title="Next"
+        onPress={() => setCurrentPage((prev) => prev + 1)}
+        disabled={indexOfLastPost >= blogPosts.length}
+        color="#FFAEB9" 
+    />
+</View>
+
+                </>
             )}
         </ScrollView>
     );
@@ -67,14 +94,14 @@ const styles = StyleSheet.create({
     container: {
         padding: 20,
         backgroundColor: "#fff",
-        alignItems: "center", // Căn giữa tất cả nội dung trong ScrollView
+        alignItems: "center",
     },
     blogList: {
         width: "100%",
-        alignItems: "center", // Căn giữa tất cả các card
+        alignItems: "center",
     },
     card: {
-        width: "80%", // Card chiếm 80% màn hình để nhìn đẹp hơn
+        width: "80%",
         marginBottom: 20,
         borderRadius: 10,
         overflow: "hidden",
@@ -84,7 +111,7 @@ const styles = StyleSheet.create({
         shadowRadius: 3,
         elevation: 5,
         backgroundColor: "white",
-        alignSelf: "center", // Đảm bảo từng card được căn giữa
+        alignSelf: "center",
     },
     imageContainer: {
         position: "relative",
@@ -133,6 +160,18 @@ const styles = StyleSheet.create({
         fontSize: 18,
         textAlign: "center",
         marginTop: 20,
+    },
+    pagination: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+        marginVertical: 20,
+        gap: 10,
+    },
+    pageNumber: {
+        fontSize: 18,
+        fontWeight: "bold",
+        marginHorizontal: 10,
     },
 });
 
