@@ -24,6 +24,7 @@ import Icon from "react-native-vector-icons/AntDesign";
 export default function Navigator() {
   const Tab = createBottomTabNavigator();
   const Stack = createNativeStackNavigator();
+  const user = AsyncStorage.getItem("user");
   const SearchInput = () => {
     return (
       <View
@@ -104,8 +105,8 @@ export default function Navigator() {
   const UserStack = () => {
     return (
       <Stack.Navigator>
-        <Stack.Screen name="UserMenu" component={UserMenuScreen} />
         <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen name="UserMenu" component={UserMenuScreen} />
         <Stack.Screen name="Register" component={RegisterScreen} />
         <Stack.Screen name="UserProfile" component={UserProfileScreen} />
         <Stack.Screen name="ManageOrder" component={ManageOrder} />

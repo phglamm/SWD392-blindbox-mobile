@@ -28,7 +28,10 @@ export default function LoginScreen() {
           text1: "Login Success",
           visibilityTime: 2000,
         });
-        navigation.navigate("UserProfile");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "UserMenu" }],
+        });
       } else if (user.roleId === 1 || user.roleId === 2) {
         Toast.show({
           type: "error",

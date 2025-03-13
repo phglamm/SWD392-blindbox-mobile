@@ -4,6 +4,8 @@ import { StatusBar } from "expo-status-bar";
 import { useNavigation } from "@react-navigation/native";
 import api from "../../api/api";
 import { Picker } from "@react-native-picker/picker";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import Toast from "react-native-toast-message";
 
 export default function UserProfileScreen({ route }) {
   const [userData, setUserData] = useState({});
@@ -58,6 +60,11 @@ export default function UserProfileScreen({ route }) {
         } else {
           console.error("Failed to update profile:", response.data);
         }
+        Toast.show({
+          type: "success",
+          text1: "Profile updated successfully",
+          visibilityTime: 2000,
+        });
       } catch (error) {
         console.log("Failed to update profile:", userData);
         console.error("API Error:", error);
