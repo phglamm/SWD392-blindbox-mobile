@@ -73,12 +73,36 @@ export default function Navigator() {
   const UserStack = () => {
     return (
       <Stack.Navigator>
-        <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name="Register" component={RegisterScreen} />
-        <Stack.Screen name="UserMenu" component={UserMenuScreen} />
-        <Stack.Screen name="UserProfile" component={UserProfileScreen} />
-        <Stack.Screen name="ManageOrder" component={ManageOrder} />
-        <Stack.Screen name="AddressBook" component={AddressBook} />
+        <Stack.Screen
+          name="Login"
+          component={LoginScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Register"
+          component={RegisterScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="UserMenu"
+          component={UserMenuScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="UserProfile"
+          component={UserProfileScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="ManageOrder"
+          component={ManageOrder}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="AddressBook"
+          component={AddressBook}
+          options={{ headerShown: false }}
+        />
         <Stack.Screen
           name="Your Favorites Box"
           component={FavoritesScreen}
