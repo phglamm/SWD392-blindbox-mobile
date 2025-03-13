@@ -52,7 +52,9 @@ export default function FavoritesScreen() {
           )}
         />
       ) : (
-        <Text>No favorites yet</Text>
+        <View style={{ alignItems: "center", marginTop: 20 }}>
+          <Text>No favorites yet</Text>
+        </View>
       )}
     </View>
   );

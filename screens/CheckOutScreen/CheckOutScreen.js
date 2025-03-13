@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -11,6 +11,8 @@ import {
 import { useCart } from "../../context/CartContext";
 import { Picker } from "@react-native-picker/picker";
 import Toast from "react-native-toast-message";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import api from "../../api/api";
 
 export default function CheckOutScreen() {
   const { cart, clearCart } = useCart();
@@ -21,32 +23,37 @@ export default function CheckOutScreen() {
   const [district, setDistrict] = useState("");
   const [ward, setWard] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("");
+  const [user, setUser] = useState(null);
+  const [userAddress, setUserAddress] = useState([]);
 
-  // const [userAddress, setUserAddress] = useState("");
+  useEffect(() => {
+    const fetchUser = async () => {
+      const userData = await AsyncStorage.getItem("user");
+      if (userData) {
+        setUser(JSON.parse(userData));
+      }
+    };
+    fetchUser();
+  }, []);
 
-  const userAddress = [
-    {
-      addressId: 103,
-      province: "string",
-      district: "string",
-      ward: "string",
-      addressDetail: "string",
-      userId: 28,
-      phoneNumber: "string",
-      name: "string",
-    },
-    {
-      addressId: 79,
-      province: "Alberta",
-      district: "Downtown",
-      ward: "Ward 8",
-      addressDetail: "9417 Peter Lane",
-      userId: 28,
-      phoneNumber: "0938444511",
-      name: "Luong The Minh",
-    },
-  ];
+  const fetchAddress = async () => {
+    if (user) {
+      try {
+        const response = await api.get(`Address/?userId=${user.userId}`);
+        const fetchedAddresses = Array.isArray(response.data)
+          ? response.data
+          : [response.data];
+        console.log(response.data);
+        setUserAddress(fetchedAddresses);
+      } catch (err) {
+        console.log(err.message);
+      }
+    }
+  };
 
+  useEffect(() => {
+    fetchAddress();
+  }, [user]);
   const totalPrice = cart.reduce(
     (total, item) => total + item.selectedOption.displayPrice * item.quantity,
     0
@@ -146,7 +153,15 @@ export default function CheckOutScreen() {
             {userAddress.map((addr) => (
               <Picker.Item
                 key={addr.addressId}
-                label={addr.addressDetail}
+                label={
+                  addr.addressDetail +
+                  ", " +
+                  addr.ward +
+                  ", " +
+                  addr.district +
+                  ", " +
+                  addr.province
+                }
                 value={addr.addressId.toString()} // Convert addressId to string for Picker
               />
             ))}

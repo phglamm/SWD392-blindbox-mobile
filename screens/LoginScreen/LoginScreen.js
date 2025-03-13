@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { TextInput, Button, Text } from "react-native-paper";
 import { FontAwesome } from "@expo/vector-icons";
@@ -12,6 +12,20 @@ export default function LoginScreen() {
   const [password, setPassword] = useState("");
   const [secureText, setSecureText] = useState(true);
   const navigation = useNavigation();
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const userData = await AsyncStorage.getItem("user");
+      if (userData) {
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "UserMenu" }],
+        });
+      }
+    };
+    fetchUser();
+  }, []);
   const handleLogin = async () => {
     try {
       const response = await api.post("Account/login", {
