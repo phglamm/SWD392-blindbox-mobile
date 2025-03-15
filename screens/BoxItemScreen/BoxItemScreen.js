@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, Image, StyleSheet, FlatList, TouchableOpacity, ScrollView } from 'react-native';
-import { FontAwesome } from '@expo/vector-icons';
-import banner2 from '../../assets/BoxItemBanner/banner2.png';
-import banner3 from '../../assets/BoxItemBanner/banner3.png';
-import banner4 from '../../assets/BoxItemBanner/banner4.png';
-import api from '../../api/api';
+import React, { useEffect, useState } from "react";
+import { View, Text, TextInput, Image, StyleSheet, FlatList, TouchableOpacity, ScrollView } from "react-native";
+import { FontAwesome } from "@expo/vector-icons";
+import banner2 from "../../assets/BoxItemBanner/banner2.png";
+import banner3 from "../../assets/BoxItemBanner/banner3.png";
+import banner4 from "../../assets/BoxItemBanner/banner4.png";
+import api from "../../api/api";
 
-const BoxItemScreen = () => {
-  const [searchQuery, setSearchQuery] = useState('');
+const BoxItemScreen = ({ navigation }) => {
+  const [searchQuery, setSearchQuery] = useState("");
   const [products, setProducts] = useState([]);
   const [page, setPage] = useState(1); // Trang hiện tại
   const [pageSize] = useState(10); // Số sản phẩm mỗi trang
@@ -18,11 +18,11 @@ const BoxItemScreen = () => {
       if (loading) return; // Đảm bảo không tải lại khi đang tải
       setLoading(true);
       try {
-        const response = await api.get('BoxItem');  
+        const response = await api.get("BoxItem");
         const data = await response.data;
         setProducts(data);
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error("Error fetching data:", error);
       } finally {
         setLoading(false);
       }
@@ -43,25 +43,32 @@ const BoxItemScreen = () => {
   const currentPageData = filteredProducts.slice((page - 1) * pageSize, page * pageSize);
 
   const renderProductCard = ({ item }) => (
-    <View style={styles.card}>
-      <Image source={{ uri: 'https://via.placeholder.com/150' }} style={styles.cardImage} />
+    <TouchableOpacity
+      style={styles.card}
+      onPress={() => {
+        console.log("Navigating to BoxItemDetailScreen with ID:", item.boxItemId); // Kiểm tra xem có log không
+        navigation.navigate("BoxItemDetail", { boxItemId: item.boxItemId });
+      }}
+    >
+      <Image source={{ uri: "https://via.placeholder.com/150" }} style={styles.cardImage} />
       <Text style={styles.productName}>{item.boxItemName}</Text>
       <Text style={styles.productColor}>Color: {item.boxItemColor}</Text>
       <View style={styles.ratingContainer}>
         {Array.from({ length: 5 }, (_, index) => (
           <FontAwesome
             key={index}
-            name={index < item.averageRating ? 'star' : 'star-o'}
+            name={index < item.averageRating ? "star" : "star-o"}
             size={20}
             color="gold"
           />
         ))}
       </View>
-    </View>
+    </TouchableOpacity>
   );
+  
 
   const clearSearch = () => {
-    setSearchQuery('');
+    setSearchQuery("");
   };
 
   const handleNextPage = () => {
@@ -96,7 +103,6 @@ const BoxItemScreen = () => {
           value={searchQuery}
           onChangeText={setSearchQuery}
         />
-        
         {searchQuery.length > 0 && (
           <TouchableOpacity onPress={clearSearch} style={styles.clearButton}>
             <FontAwesome name="times" size={20} color="gray" />
@@ -142,29 +148,29 @@ const BoxItemScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8f8f8',
+    backgroundColor: "#f8f8f8",
     paddingTop: 10,
   },
   bannerContentContainer: {
-    alignItems: 'center', // Áp dụng căn giữa cho phần contentContainerStyle
-    justifyContent: 'center',
+    alignItems: "center", // Áp dụng căn giữa cho phần contentContainerStyle
+    justifyContent: "center",
   },
   bannerImage: {
-    width: "400", 
+    width: "400",
     height: 300,
-    resizeMode: 'cover',
+    resizeMode: "cover",
     borderRadius: 10,
     marginHorizontal: 2, // Khoảng cách giữa các banner
   },
   searchContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginHorizontal: 20,
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: "#ccc",
     borderRadius: 5,
     paddingHorizontal: 10,
-    marginTop: 10, 
+    marginTop: 10,
   },
   searchInput: {
     flex: 1,
@@ -172,65 +178,65 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   clearButton: {
-    paddingLeft: 10, 
+    paddingLeft: 10,
   },
   productsContainer: {
     paddingHorizontal: 10,
     paddingTop: 10,
   },
   card: {
-    width: '45%',
-    backgroundColor: 'white',
+    width: "45%",
+    backgroundColor: "white",
     borderRadius: 10,
     margin: 10,
     padding: 10,
-    alignItems: 'center',
-    elevation: 5, 
+    alignItems: "center",
+    elevation: 5,
   },
   cardImage: {
     width: 120,
     height: 120,
-    resizeMode: 'contain',
+    resizeMode: "contain",
   },
   productName: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginTop: 10,
   },
   productColor: {
     fontSize: 12,
-    color: '#777',
+    color: "#777",
     marginTop: 5,
   },
   ratingContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     marginTop: 5,
   },
   paginationContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center', // Canh giữa phân trang
+    flexDirection: "row",
+    justifyContent: "center", // Canh giữa phân trang
     paddingVertical: 20,
-    alignItems: 'center',
+    alignItems: "center",
     height: 60, // Tăng chiều cao để tránh mất chữ
   },
   paginationButton: {
-    backgroundColor: '#FFC1C1', // Màu nút
+    backgroundColor: "#FFC1C1", // Màu nút
     paddingVertical: 12, // Tăng chiều cao của nút
     paddingHorizontal: 20, // Tăng chiều rộng của nút
     borderRadius: 5,
     height: 45, // Tăng chiều cao của nút
   },
   disabledButton: {
-    backgroundColor: '#ddd',
+    backgroundColor: "#ddd",
   },
   paginationText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 16, // Giảm kích thước font chữ
   },
   pageInfo: {
     fontSize: 16,
-    fontWeight: 'bold',
-    color: '#333',
+    fontWeight: "bold",
+    color: "#333",
     marginHorizontal: 15,
   },
 });
