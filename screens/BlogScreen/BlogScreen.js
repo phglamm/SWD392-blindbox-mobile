@@ -1,22 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { ScrollView, View, Text, Image, StyleSheet, TouchableOpacity, ActivityIndicator, Button } from "react-native";
-import axios from "axios"; 
+import axios from "axios";
 import api from "../../api/api";
 import { useNavigation } from "@react-navigation/native";
 
 
 const BlogScreen = () => {
-    const [blogPosts, setBlogPosts] = useState([]); 
-    const [loading, setLoading] = useState(true); 
-    const [error, setError] = useState(null); 
-    const [currentPage, setCurrentPage] = useState(1); 
-    const postsPerPage = 5; 
+    const [blogPosts, setBlogPosts] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [currentPage, setCurrentPage] = useState(1);
+    const postsPerPage = 5;
 
-    
+
     const fetchBlogPosts = async () => {
         try {
             const response = await api.get("BlogPost");
-            setBlogPosts(response.data); 
+            setBlogPosts(response.data);
         } catch (err) {
             setError(err);
             console.error("Error fetching blog posts:", err);
@@ -25,11 +25,11 @@ const BlogScreen = () => {
         }
     };
 
-    
+
     useEffect(() => {
         fetchBlogPosts();
     }, []);
-    const navigation = useNavigation(); 
+    const navigation = useNavigation();
 
 
     const handleCardPress = (blogPostId) => {
@@ -69,20 +69,20 @@ const BlogScreen = () => {
                     </View>
 
                     <View style={styles.pagination}>
-    <Button
-        title="Previous"
-        onPress={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-        disabled={currentPage === 1}
-        color="#FFAEB9"
-    />
-    <Text style={styles.pageNumber}>Page {currentPage}</Text>
-    <Button
-        title="Next"
-        onPress={() => setCurrentPage((prev) => prev + 1)}
-        disabled={indexOfLastPost >= blogPosts.length}
-        color="#FFAEB9" 
-    />
-</View>
+                        <Button
+                            title="Previous"
+                            onPress={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                            disabled={currentPage === 1}
+                            color="#FFAEB9"
+                        />
+                        <Text style={styles.pageNumber}>Page {currentPage}</Text>
+                        <Button
+                            title="Next"
+                            onPress={() => setCurrentPage((prev) => prev + 1)}
+                            disabled={indexOfLastPost >= blogPosts.length}
+                            color="#FFAEB9"
+                        />
+                    </View>
 
                 </>
             )}
