@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity, Modal } from 'react-native';
 import { Rating } from 'react-native-ratings';
 import api from '../../api/api';
 
@@ -7,6 +7,8 @@ const BoxItemDetailScreen = ({ route }) => {
   const { boxItemId } = route.params;
   const [itemDetails, setItemDetails] = useState(null);
   const [votes, setVotes] = useState([]);
+  const [modalVisible, setModalVisible] = useState(false);  // State for Modal visibility
+  const [userRating, setUserRating] = useState(0);  // State to store selected rating
 
   useEffect(() => {
     const fetchItemDetails = async () => {
@@ -30,6 +32,21 @@ const BoxItemDetailScreen = ({ route }) => {
     fetchItemDetails();
     fetchVotes();
   }, [boxItemId]);
+
+  // Handle the vote submission
+  const submitVote = async () => {
+    try {
+      await api.post('/BoxItem/vote', {
+        boxItemId: boxItemId,
+        userId: 123, // Replace with actual user ID
+        rating: userRating,
+      });
+      setModalVisible(false); // Close the modal after submitting
+      fetchVotes(); // Re-fetch votes to update the list with the new vote
+    } catch (error) {
+      console.error('Error submitting vote:', error);
+    }
+  };
 
   if (!itemDetails) {
     return (
@@ -75,6 +92,7 @@ const BoxItemDetailScreen = ({ route }) => {
               ratingColor="#FFD700"
             />
           </View>
+
           {/* Votes Section */}
           <View style={styles.votesContainer}>
             <Text style={styles.boldText}>Votes:</Text>
@@ -83,37 +101,63 @@ const BoxItemDetailScreen = ({ route }) => {
             ) : (
               votes.map((vote, index) => (
                 <View key={index} style={styles.voteItem}>
-  {/* Username and Star Rating on the same line */}
-  <View style={styles.voteContent}>
-    <Text style={styles.voteText}>{vote.username}</Text>
-
-    {/* Star Rating for each vote */}
-    <Rating
-      type="star"
-      ratingCount={5} // Maximum number of stars
-      imageSize={20}  // Size of the stars
-      readonly
-      startingValue={vote.rating}  // Rating value from the vote
-      ratingBackgroundColor="transparent" // Transparent background
-      ratingColor="#FFD700" // Gold color for the stars
-    />
-  </View>
-</View>
-
+                  <View style={styles.voteContent}>
+                    <Text style={styles.voteText}>{vote.username}</Text>
+                    <Rating
+                      type="star"
+                      ratingCount={5}
+                      imageSize={20}
+                      readonly
+                      startingValue={vote.rating}
+                      ratingBackgroundColor="transparent"
+                      ratingColor="#FFD700"
+                    />
+                  </View>
+                </View>
               ))
             )}
           </View>
         </View>
       </ScrollView>
 
+      {/* Vote Button */}
       <View style={styles.buttonsContainer}>
-        <TouchableOpacity style={[styles.button, { backgroundColor: '#7EC0EE' }]} onPress={() => console.log('Hunt this Item')}>
-          <Text style={styles.buttonText}>Hunt this Item</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={[styles.button, { backgroundColor: '#EEA2AD' }]} onPress={() => console.log('Vote this Item')}>
+        <TouchableOpacity style={[styles.button, { backgroundColor: '#7EC0EE' }]} onPress={() => setModalVisible(true)}>
           <Text style={styles.buttonText}>Vote this Item</Text>
         </TouchableOpacity>
+        <TouchableOpacity style={[styles.button, { backgroundColor: '#EEA2AD' }]} onPress={() => console.log('Hunt this Item')}>
+          <Text style={styles.buttonText}>Hunt this Item</Text>
+        </TouchableOpacity>
       </View>
+
+      {/* Modal for Rating */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}>
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Vote Item</Text>
+            <Text>Rating:</Text>
+            <Rating
+              type="star"
+              ratingCount={5}
+              imageSize={40}
+              onFinishRating={setUserRating} // Update the userRating state when rating is finished
+              startingValue={userRating}
+            />
+            <View style={styles.modalButtons}>
+              <TouchableOpacity style={styles.modalButton} onPress={() => setModalVisible(false)}>
+                <Text>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.modalButton} onPress={submitVote}>
+                <Text>Vote</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -124,7 +168,7 @@ const styles = StyleSheet.create({
   },
   scrollViewContainer: {
     flexGrow: 1,
-    paddingBottom: 100,
+    paddingBottom: 100,  // Adjust padding to allow space for buttons
   },
   card: {
     backgroundColor: '#fff',
@@ -182,21 +226,21 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   voteItem: {
-    flexDirection: 'row',  // Ensure the username and stars are in a row
-    alignItems: 'center',  // Vertically align them in the center
-    marginBottom: 10,      // Add some space between vote items
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
   },
   voteContent: {
-    flexDirection: 'row',   // Align username and stars horizontally
-    alignItems: 'center',   // Vertically center the text and stars
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   voteText: {
     fontSize: 16,
-    marginRight: 10, // Add space between username and stars
+    marginRight: 10,
   },
   buttonsContainer: {
     position: 'absolute',
-    bottom: 0,
+    bottom: 20,  // Keep buttons at the bottom of the screen
     left: 0,
     right: 0,
     padding: 20,
@@ -215,6 +259,36 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    backgroundColor: '#fff',
+    padding: 20,
+    borderRadius: 10,
+    alignItems: 'center',
+    width: '80%',
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  modalButtons: {
+    flexDirection: 'row',
+    marginTop: 20,
+    justifyContent: 'space-between',
+    width: '100%',
+  },
+  modalButton: {
+    backgroundColor: '#7EC0EE',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
   },
 });
 
