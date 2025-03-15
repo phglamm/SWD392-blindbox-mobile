@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
-import { Rating } from 'react-native-ratings'; // Import thư viện
+import { Rating } from 'react-native-ratings';
 import api from '../../api/api';
 
 const BoxItemDetailScreen = ({ route }) => {
-  const { boxItemId } = route.params; // Nhận boxItemId từ params
+  const { boxItemId } = route.params;
   const [itemDetails, setItemDetails] = useState(null);
+  const [votes, setVotes] = useState([]);
 
   useEffect(() => {
     const fetchItemDetails = async () => {
@@ -17,7 +18,17 @@ const BoxItemDetailScreen = ({ route }) => {
       }
     };
 
+    const fetchVotes = async () => {
+      try {
+        const response = await api.get(`/BoxItem/${boxItemId}/votes`);
+        setVotes(response.data);
+      } catch (error) {
+        console.error('Error fetching votes:', error);
+      }
+    };
+
     fetchItemDetails();
+    fetchVotes();
   }, [boxItemId]);
 
   if (!itemDetails) {
@@ -31,7 +42,7 @@ const BoxItemDetailScreen = ({ route }) => {
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollViewContainer}>
-        {/* Card */}
+        {/* Main Details Card */}
         <View style={styles.card}>
           {itemDetails.imageUrl && (
             <Image
@@ -42,55 +53,59 @@ const BoxItemDetailScreen = ({ route }) => {
           <Text style={styles.productName}>{itemDetails.boxItemName}</Text>
           <Text style={styles.productDescription}>{itemDetails.boxItemDescription}</Text>
 
-          {/* In đậm chữ Eyes và Color */}
           <Text style={styles.boldText}>Eyes: {itemDetails.boxItemEyes}</Text>
           <Text style={styles.boldText}>Color: {itemDetails.boxItemColor}</Text>
 
-          {/* Hiển thị ngôi sao cho averageRating */}
-          {/* <View style={styles.ratingContainer}>
-            <Text style={styles.boldText}>Average Rating: </Text>
-            <Rating
-              type="star"
-              ratingCount={5} // Số sao tối đa
-              imageSize={30}  // Kích thước sao
-              readonly
-              startingValue={itemDetails.averageRating}  // Điểm đánh giá hiện tại
-              ratingBackgroundColor="transparent" // Bỏ viền trắng
-              ratingColor="#FFD700" // Màu sao vàng
-            />
-          </View>  */}
-
-          {/* Check if currentRolledItem exists */}
-          {itemDetails.currentRolledItem && (
-            <Text>Current Rolled Item ID: {itemDetails.currentRolledItem.currentRolledItemId}</Text>
-          )}
-
-          {/* Check if onlineSeriesBox exists */}
-          {itemDetails.onlineSeriesBox && (
-            <Text>Online Series Box ID: {itemDetails.onlineSeriesBox.onlineSeriesBoxId}</Text>
-          )}
-
-          {/* Hiển thị giá trị của isSecret */}
           <Text style={styles.boldText}>
             Secret: {itemDetails.isSecret ? 'Secret' : 'Normal'}
           </Text>
+        </View>
 
+        {/* Rating Card */}
+        <View style={styles.ratingCard}>
+          <Text style={styles.ratingCardTitle}>Average Rating</Text>
           <View style={styles.ratingContainer}>
-            <Text style={styles.boldText}>Average Rating: </Text>
             <Rating
               type="star"
-              ratingCount={5} // Số sao tối đa
-              imageSize={30}  // Kích thước sao
+              ratingCount={5}
+              imageSize={50}
               readonly
-              startingValue={itemDetails.averageRating}  // Điểm đánh giá hiện tại
-              ratingBackgroundColor="transparent" // Bỏ viền trắng
-              ratingColor="#FFD700" // Màu sao vàng
+              startingValue={itemDetails.averageRating}
+              ratingBackgroundColor="transparent"
+              ratingColor="#FFD700"
             />
-          </View> 
+          </View>
+          {/* Votes Section */}
+          <View style={styles.votesContainer}>
+            <Text style={styles.boldText}>Votes:</Text>
+            {votes.length === 0 ? (
+              <Text>No votes available yet.</Text>
+            ) : (
+              votes.map((vote, index) => (
+                <View key={index} style={styles.voteItem}>
+  {/* Username and Star Rating on the same line */}
+  <View style={styles.voteContent}>
+    <Text style={styles.voteText}>{vote.username}</Text>
+
+    {/* Star Rating for each vote */}
+    <Rating
+      type="star"
+      ratingCount={5} // Maximum number of stars
+      imageSize={20}  // Size of the stars
+      readonly
+      startingValue={vote.rating}  // Rating value from the vote
+      ratingBackgroundColor="transparent" // Transparent background
+      ratingColor="#FFD700" // Gold color for the stars
+    />
+  </View>
+</View>
+
+              ))
+            )}
+          </View>
         </View>
       </ScrollView>
 
-      {/* Fixed Buttons */}
       <View style={styles.buttonsContainer}>
         <TouchableOpacity style={[styles.button, { backgroundColor: '#7EC0EE' }]} onPress={() => console.log('Hunt this Item')}>
           <Text style={styles.buttonText}>Hunt this Item</Text>
@@ -109,7 +124,7 @@ const styles = StyleSheet.create({
   },
   scrollViewContainer: {
     flexGrow: 1,
-    paddingBottom: 100, // Ensure space for buttons at the bottom
+    paddingBottom: 100,
   },
   card: {
     backgroundColor: '#fff',
@@ -118,7 +133,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
     shadowRadius: 10,
-    elevation: 5, // Chỉ dành cho Android
+    elevation: 5,
     padding: 20,
     marginBottom: 20,
   },
@@ -137,14 +152,47 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginTop: 10,
   },
+  ratingCard: {
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    shadowColor: '#F5F5F5',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 10,
+    elevation: 5,
+    padding: 20,
+    marginBottom: 20,
+    marginTop: 20,
+  },
+  ratingCardTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
   ratingContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 10,
+    justifyContent: 'center',
   },
   boldText: {
-    fontWeight: 'bold', // In đậm
+    fontWeight: 'bold',
     marginTop: 10,
+  },
+  votesContainer: {
+    marginTop: 20,
+  },
+  voteItem: {
+    flexDirection: 'row',  // Ensure the username and stars are in a row
+    alignItems: 'center',  // Vertically align them in the center
+    marginBottom: 10,      // Add some space between vote items
+  },
+  voteContent: {
+    flexDirection: 'row',   // Align username and stars horizontally
+    alignItems: 'center',   // Vertically center the text and stars
+  },
+  voteText: {
+    fontSize: 16,
+    marginRight: 10, // Add space between username and stars
   },
   buttonsContainer: {
     position: 'absolute',
@@ -154,17 +202,17 @@ const styles = StyleSheet.create({
     padding: 20,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    backgroundColor: '#fff', // Optional: Background color for buttons container
+    backgroundColor: '#fff',
   },
   button: {
     paddingVertical: 15,
     paddingHorizontal: 25,
     borderRadius: 5,
-    width: '45%', // Each button takes up half of the container width
+    width: '45%',
   },
   buttonText: {
     textAlign: 'center',
-    color: '#fff', // Màu chữ trắng
+    color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
   },
