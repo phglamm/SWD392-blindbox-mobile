@@ -83,6 +83,11 @@ export default function Navigator() {
       <Stack.Navigator>
         <Stack.Screen name="BoxItem" component={BoxItemScreen} />
         <Stack.Screen name="BoxItemDetail" component={BoxItemDetailScreen} />
+        <Stack.Screen
+          name="ProductDetailScreen"
+          component={ProductDetailScreen}
+          options={{ headerShown: false }}
+        />
       </Stack.Navigator>
     );
   };

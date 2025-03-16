@@ -3,6 +3,9 @@ import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity, Modal } fr
 import { Rating } from 'react-native-ratings';
 import api from '../../api/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Toast from 'react-native-toast-message';
+import { useNavigation } from '@react-navigation/native';
+
 
 
 const BoxItemDetailScreen = ({ route }) => {
@@ -11,84 +14,72 @@ const BoxItemDetailScreen = ({ route }) => {
   const [votes, setVotes] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);  // State for Modal visibility
   const [userRating, setUserRating] = useState(0);  // State to store selected rating
+  const [user, setUser] = useState(null);
+  const navigation = useNavigation();
 
   useEffect(() => {
     const fetchItemDetails = async () => {
       try {
-        const response = await api.get(`/BoxItem/${boxItemId}`);
+        const response = await api.get(`/BoxItem/withDTO/${boxItemId}`);
         setItemDetails(response.data);
       } catch (error) {
         console.error('Error fetching item details:', error);
       }
     };
 
-    const fetchVotes = async () => {
-      try {
-        const response = await api.get(`/BoxItem/${boxItemId}/votes`);
-        setVotes(response.data);
-      } catch (error) {
-        console.error('Error fetching votes:', error);
+    const fetchUser = async () => {
+      const userData = await AsyncStorage.getItem("user");
+      if (userData) {
+        setUser(JSON.parse(userData));
       }
     };
-
+    fetchUser();
     fetchItemDetails();
-    fetchVotes();
   }, [boxItemId]);
 
-  // Hàm để lấy thông tin người dùng từ API
-  const getUserInfo = async () => {
+
+  const fetchVotes = async () => {
     try {
-      // Lấy userId từ AsyncStorage
-      const userId = await AsyncStorage.getItem('userId'); // Lưu ý là key 'userId' phải giống với khi bạn lưu thông tin
-      if (!userId) {
-        console.error('User is not logged in!');
-        return null;
-      }
-  
-      // Gọi API để lấy thông tin người dùng
-      const response = await api.get(`/api/User/${userId}`);
-      return response.data; // Trả về thông tin người dùng
+      const response = await api.get(`/BoxItem/${boxItemId}/votes`);
+      setVotes(response.data);
     } catch (error) {
-      console.error('Error getting user info:', error);
-      return null;
+      console.error('Error fetching votes:', error);
     }
   };
-  
-  
+
   // Hàm submit vote
   const submitVote = async () => {
-    try {
-      const userInfo = await getUserInfo(); // Lấy thông tin người dùng
-  
-      if (!userInfo) {
-        console.error('User is not logged in!');
-        return;
+    if (user) {
+      try {
+        // Nếu chưa vote, gửi yêu cầu vote mới
+        const response = await api.post('/BoxItem/vote', {
+          boxItemId: boxItemId,
+          userId: user.userId, // Sử dụng userId lấy từ thông tin người dùng
+          rating: userRating,
+        });
+
+        console.log('Vote submitted successfully:', response);
+        setModalVisible(false); // Đóng modal sau khi gửi
+        fetchVotes(); // Cập nhật danh sách votes
+        Toast.show({
+          type: 'success',
+          text1: 'Success',
+          text2: 'Vote submitted successfully.',
+        });
+      } catch (error) {
+        console.error('Error submitting vote:', error.response ? error.response.data : error.message);
       }
-  
-      // Kiểm tra xem người dùng đã vote chưa (giả sử có API trả về danh sách votes)
-      const existingVotes = await api.get(`/BoxItem/${boxItemId}/votes`);
-      const hasVoted = existingVotes.data.some(vote => vote.userId === userInfo.userId);
-      if (hasVoted) {
-        console.log('You have already voted for this item.');
-        return;
-      }
-  
-      // Nếu chưa vote, gửi yêu cầu vote mới
-      const response = await api.post('/BoxItem/vote', {
-        boxItemId: boxItemId,
-        userId: userInfo.userId, // Sử dụng userId lấy từ thông tin người dùng
-        rating: userRating,
+    } else {
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'You need to login to vote.',
       });
-  
-      console.log('Vote submitted successfully:', response);
-      setModalVisible(false); // Đóng modal sau khi gửi
-      fetchVotes(); // Lấy lại danh sách bình chọn để cập nhật
-    } catch (error) {
-      console.error('Error submitting vote:', error.response ? error.response.data : error.message);
+      console.log('You need to login to vote.');
     }
   };
-  
-  
+
+
 
   if (!itemDetails) {
     return (
@@ -167,9 +158,19 @@ const BoxItemDetailScreen = ({ route }) => {
         <TouchableOpacity style={[styles.button, { backgroundColor: '#7EC0EE' }]} onPress={() => setModalVisible(true)}>
           <Text style={styles.buttonText}>Vote this Item</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={[styles.button, { backgroundColor: '#EEA2AD' }]} onPress={() => console.log('Hunt this Item')}>
+        <TouchableOpacity
+          style={[styles.button, { backgroundColor: '#EEA2AD' }]}
+          onPress={() => {
+            if (itemDetails) {
+              // Navigate to the product detail screen with the product id
+              navigation.navigate('ProductDetailScreen', { boxId: itemDetails.belongBox.boxId }); 
+
+            }
+          }}
+        >
           <Text style={styles.buttonText}>Hunt this Item</Text>
         </TouchableOpacity>
+
       </View>
 
       {/* Modal for Rating */}
