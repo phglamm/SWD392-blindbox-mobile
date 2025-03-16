@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity, Modal } from 'react-native';
 import { Rating } from 'react-native-ratings';
 import api from '../../api/api';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 const BoxItemDetailScreen = ({ route }) => {
   const { boxItemId } = route.params;
@@ -33,20 +35,60 @@ const BoxItemDetailScreen = ({ route }) => {
     fetchVotes();
   }, [boxItemId]);
 
-  // Handle the vote submission
-  const submitVote = async () => {
+  // Hàm để lấy thông tin người dùng từ API
+  const getUserInfo = async () => {
     try {
-      await api.post('/BoxItem/vote', {
-        boxItemId: boxItemId,
-        userId: 123, // Replace with actual user ID
-        rating: userRating,
-      });
-      setModalVisible(false); // Close the modal after submitting
-      fetchVotes(); // Re-fetch votes to update the list with the new vote
+      // Lấy userId từ AsyncStorage
+      const userId = await AsyncStorage.getItem('userId'); // Lưu ý là key 'userId' phải giống với khi bạn lưu thông tin
+      if (!userId) {
+        console.error('User is not logged in!');
+        return null;
+      }
+  
+      // Gọi API để lấy thông tin người dùng
+      const response = await api.get(`/api/User/${userId}`);
+      return response.data; // Trả về thông tin người dùng
     } catch (error) {
-      console.error('Error submitting vote:', error);
+      console.error('Error getting user info:', error);
+      return null;
     }
   };
+  
+  
+  // Hàm submit vote
+  const submitVote = async () => {
+    try {
+      const userInfo = await getUserInfo(); // Lấy thông tin người dùng
+  
+      if (!userInfo) {
+        console.error('User is not logged in!');
+        return;
+      }
+  
+      // Kiểm tra xem người dùng đã vote chưa (giả sử có API trả về danh sách votes)
+      const existingVotes = await api.get(`/BoxItem/${boxItemId}/votes`);
+      const hasVoted = existingVotes.data.some(vote => vote.userId === userInfo.userId);
+      if (hasVoted) {
+        console.log('You have already voted for this item.');
+        return;
+      }
+  
+      // Nếu chưa vote, gửi yêu cầu vote mới
+      const response = await api.post('/BoxItem/vote', {
+        boxItemId: boxItemId,
+        userId: userInfo.userId, // Sử dụng userId lấy từ thông tin người dùng
+        rating: userRating,
+      });
+  
+      console.log('Vote submitted successfully:', response);
+      setModalVisible(false); // Đóng modal sau khi gửi
+      fetchVotes(); // Lấy lại danh sách bình chọn để cập nhật
+    } catch (error) {
+      console.error('Error submitting vote:', error.response ? error.response.data : error.message);
+    }
+  };
+  
+  
 
   if (!itemDetails) {
     return (
