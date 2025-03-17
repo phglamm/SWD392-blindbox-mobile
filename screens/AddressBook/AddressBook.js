@@ -30,6 +30,7 @@ export default function AddressBook() {
         const fetchedAddresses = Array.isArray(response.data)
           ? response.data
           : [response.data];
+        console.log(response.data);
         setAddresses(fetchedAddresses);
       } catch (err) {
         console.log(err.message);

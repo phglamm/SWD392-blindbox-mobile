@@ -21,10 +21,24 @@ import AddressBook from "../screens/AddressBook/AddressBook";
 import SearchInput from "../components/SearchInput/SearchInput";
 import OrderDetailScreen from "./../screens/OrderDetailScreen/OrderDetailScreen";
 import Icon from "react-native-vector-icons/FontAwesome";
+import BlogDetailScreen from "../screens/BlogScreen/BlogDetailScreen";
+import BlogScreen from "./../screens/BlogScreen/BlogScreen";
+
 export default function Navigator() {
   const Tab = createBottomTabNavigator();
   const Stack = createNativeStackNavigator();
 
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const userData = await AsyncStorage.getItem("user");
+      if (userData) {
+        setUser(JSON.parse(userData));
+      }
+    };
+    fetchUser();
+  }, []);
   const HomeStack = () => {
     return (
       <Stack.Navigator>
@@ -41,6 +55,8 @@ export default function Navigator() {
           name="ProductDetailScreen"
           component={ProductDetailScreen}
         />
+        <Stack.Screen name="Blog" component={BlogScreen} />
+        <Stack.Screen name="BlogDetail" component={BlogDetailScreen} />
       </Stack.Navigator>
     );
   };
@@ -66,14 +82,23 @@ export default function Navigator() {
   const BoxItemStack = () => {
     return (
       <Stack.Navigator>
-        <Stack.Screen name="BoxItem" component={BoxItemScreen} />
+        <Stack.Screen
+          name="BoxItem"
+          component={BoxItemScreen}
+          options={{ headerShown: false }}
+        />
         <Stack.Screen name="BoxItemDetail" component={BoxItemDetailScreen} />
+        <Stack.Screen
+          name="ProductDetailScreen"
+          component={ProductDetailScreen}
+          options={{ headerShown: false }}
+        />
       </Stack.Navigator>
     );
   };
   const UserStack = () => {
     return (
-      <Stack.Navigator>
+      <Stack.Navigator initialRouteName={user ? "UserMenu" : "Login"}>
         <Stack.Screen
           name="Login"
           component={LoginScreen}
@@ -193,11 +218,5 @@ export default function Navigator() {
     <NavigationContainer>
       <MainTab />
     </NavigationContainer>
-    // <NavigationContainer>
-    //   <Stack.Navigator initialRouteName="OrderSuccess">
-    //     <Stack.Screen name="OrderSuccess" component={OrderSuccessScreen} options={{ headerShown: false }} />
-    //     <Stack.Screen name="MainTab" component={MainTab} options={{ headerShown: false }} />
-    //   </Stack.Navigator>
-    // </NavigationContainer>
   );
 }

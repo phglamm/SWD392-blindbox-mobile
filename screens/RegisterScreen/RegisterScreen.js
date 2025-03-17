@@ -1,28 +1,128 @@
 import React, { useState } from "react";
-import { View, StyleSheet, TouchableOpacity, Image } from "react-native";
-import { TextInput, Button, Text } from "react-native-paper";
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+  ScrollView,
+} from "react-native";
+import { TextInput, Button, Text, RadioButton } from "react-native-paper";
 import { FontAwesome } from "@expo/vector-icons";
+import Toast from "react-native-toast-message";
+import api from "../../api/api";
 
 export default function RegisterScreen({ navigation }) {
+  const [username, setUsername] = useState("");
+  const [fullName, setFullName] = useState("");
+  const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [secureText, setSecureText] = useState(true);
+  const [gender, setGender] = useState(true); // 'male' or 'female'
+
+  const handleRegister = async () => {
+    try {
+      const registerData = {
+        username,
+        fullName,
+        phoneNumber: phone,
+        email,
+        password,
+        gender,
+        roleId: 3,
+        isTestAccount: false,
+      };
+      const response = await api.post("Account/register", registerData);
+      console.log(response.data);
+      Toast.show({
+        type: "success",
+        text1: "Register success",
+        text2: "Please login",
+      });
+      navigation.navigate("Login");
+    } catch (error) {
+      console.error("Error registering:", error.response.data);
+      Toast.show({
+        type: "error",
+        text1: "Error registering",
+        text2: "Please try again",
+      });
+    }
+  };
 
   return (
-    <View style={styles.container}>
-      <Image source={require("../../assets/Logo-removebg.png")} style={styles.logo} resizeMode="contain" />
+    <ScrollView contentContainerStyle={styles.container}>
+      <Image
+        source={require("../../assets/Logo-removebg.png")}
+        style={styles.logo}
+        resizeMode="contain"
+      />
       <Text style={styles.title}>Create an account</Text>
+
+      {/* Input Username */}
+      <TextInput
+        label="Username"
+        mode="outlined"
+        left={<TextInput.Icon icon="account" />}
+        value={username}
+        onChangeText={(text) => setUsername(text)}
+        style={styles.input}
+        theme={{
+          colors: {
+            primary: "rgb(248, 150, 150)",
+            outline: "rgb(248, 150, 150)",
+          },
+        }}
+      />
+
+      {/* Input Full Name */}
+      <TextInput
+        label="Full Name"
+        mode="outlined"
+        left={<TextInput.Icon icon="account" />}
+        value={fullName}
+        onChangeText={(text) => setFullName(text)}
+        style={styles.input}
+        theme={{
+          colors: {
+            primary: "rgb(248, 150, 150)",
+            outline: "rgb(248, 150, 150)",
+          },
+        }}
+      />
+
+      {/* Input Phone */}
+      <TextInput
+        label="Phone"
+        mode="outlined"
+        left={<TextInput.Icon icon="phone" />}
+        value={phone}
+        onChangeText={(text) => setPhone(text)}
+        style={styles.input}
+        keyboardType="phone-pad"
+        theme={{
+          colors: {
+            primary: "rgb(248, 150, 150)",
+            outline: "rgb(248, 150, 150)",
+          },
+        }}
+      />
 
       {/* Input Email */}
       <TextInput
-        label="Username or Email"
+        label="Email"
         mode="outlined"
-        left={<TextInput.Icon icon="account" />}
+        left={<TextInput.Icon icon="email" />}
         value={email}
         onChangeText={(text) => setEmail(text)}
         style={styles.input}
-        theme={{ colors: { primary: "rgb(248, 150, 150)", outline: "rgb(248, 150, 150)" } }}
+        theme={{
+          colors: {
+            primary: "rgb(248, 150, 150)",
+            outline: "rgb(248, 150, 150)",
+          },
+        }}
       />
 
       {/* Input Password */}
@@ -30,12 +130,22 @@ export default function RegisterScreen({ navigation }) {
         label="Password"
         mode="outlined"
         left={<TextInput.Icon icon="lock" />}
-        right={<TextInput.Icon icon={secureText ? "eye-off" : "eye"} onPress={() => setSecureText(!secureText)} />}
+        right={
+          <TextInput.Icon
+            icon={secureText ? "eye-off" : "eye"}
+            onPress={() => setSecureText(!secureText)}
+          />
+        }
         secureTextEntry={secureText}
         value={password}
         onChangeText={(text) => setPassword(text)}
         style={styles.input}
-        theme={{ colors: { primary: "rgb(248, 150, 150)", outline: "rgb(248, 150, 150)" } }}
+        theme={{
+          colors: {
+            primary: "rgb(248, 150, 150)",
+            outline: "rgb(248, 150, 150)",
+          },
+        }}
       />
 
       {/* Confirm Password */}
@@ -43,16 +153,47 @@ export default function RegisterScreen({ navigation }) {
         label="Confirm Password"
         mode="outlined"
         left={<TextInput.Icon icon="lock" />}
-        right={<TextInput.Icon icon={secureText ? "eye-off" : "eye"} onPress={() => setSecureText(!secureText)} />}
+        right={
+          <TextInput.Icon
+            icon={secureText ? "eye-off" : "eye"}
+            onPress={() => setSecureText(!secureText)}
+          />
+        }
         secureTextEntry={secureText}
         value={confirmPassword}
         onChangeText={(text) => setConfirmPassword(text)}
         style={styles.input}
-        theme={{ colors: { primary: "rgb(248, 150, 150)", outline: "rgb(248, 150, 150)" } }}
+        theme={{
+          colors: {
+            primary: "rgb(248, 150, 150)",
+            outline: "rgb(248, 150, 150)",
+          },
+        }}
       />
 
+      {/* Gender Selection */}
+      <View style={styles.genderContainer}>
+        <Text style={styles.label}>Gender</Text>
+        <RadioButton.Group onValueChange={setGender} value={gender}>
+          <View style={styles.radioGroup}>
+            <View style={styles.radioButton}>
+              <RadioButton value={true} />
+              <Text>Male</Text>
+            </View>
+            <View style={styles.radioButton}>
+              <RadioButton value={false} />
+              <Text>Female</Text>
+            </View>
+          </View>
+        </RadioButton.Group>
+      </View>
+
       {/* Register Button */}
-      <Button mode="contained" onPress={() => console.log("Register pressed")} style={styles.button}>
+      <Button
+        mode="contained"
+        onPress={() => handleRegister()}
+        style={styles.button}
+      >
         Create Account
       </Button>
 
@@ -62,28 +203,24 @@ export default function RegisterScreen({ navigation }) {
         <TouchableOpacity style={styles.socialIcon}>
           <FontAwesome name="google" size={24} color="#DB4437" />
         </TouchableOpacity>
-        {/* <TouchableOpacity style={styles.socialIcon}>
-          <FontAwesome name="apple" size={24} color="#000" />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.socialIcon}>
-          <FontAwesome name="facebook" size={24} color="#3b5998" />
-        </TouchableOpacity> */}
       </View>
 
       {/* Login Link */}
       <Text style={styles.registerText}>
-        I Already Have an Account {" "}
-        <TouchableOpacity onPress={() => navigation.navigate("Login")}> 
-          <Text style={{ fontWeight: "bold", color: "rgb(248, 150, 150)" }}>Login</Text>
+        I Already Have an Account{" "}
+        <TouchableOpacity onPress={() => navigation.navigate("Login")}>
+          <Text style={{ fontWeight: "bold", color: "rgb(248, 150, 150)" }}>
+            Login
+          </Text>
         </TouchableOpacity>
       </Text>
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     justifyContent: "center",
     alignItems: "center",
     padding: 20,
@@ -130,5 +267,22 @@ const styles = StyleSheet.create({
   registerText: {
     color: "#666",
     marginTop: 10,
+  },
+  genderContainer: {
+    width: "100%",
+    marginBottom: 15,
+  },
+  radioGroup: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  radioButton: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  label: {
+    fontSize: 16,
+    fontWeight: "bold",
+    marginBottom: 10,
   },
 });

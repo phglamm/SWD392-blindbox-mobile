@@ -22,6 +22,7 @@ export default function ProductDetailScreen({ route }) {
   const { favorites, toggleFavorite } = useFavorites();
   const isFavorite = favorites.some((fav) => fav.boxId === boxDetail.boxId);
   const { addToCart } = useCart();
+
   useEffect(() => {
     const fetchBoxDetail = async () => {
       try {
@@ -30,8 +31,11 @@ export default function ProductDetailScreen({ route }) {
         const boxData = response.data || {};
         setBoxDetail(boxData);
 
+        const filterBoxOptions = boxData.boxOptions.filter(
+          (option) => option.isOnlineSerieBox === false
+        );
         if (boxData.boxOptions && boxData.boxOptions.length > 0) {
-          const defaultOption = boxData.boxOptions.reduce((prev, curr) =>
+          const defaultOption = filterBoxOptions.reduce((prev, curr) =>
             prev.displayPrice < curr.displayPrice ? prev : curr
           );
           setSelectedOption(defaultOption);
@@ -43,6 +47,9 @@ export default function ProductDetailScreen({ route }) {
 
     fetchBoxDetail();
   }, []);
+  const filteredBoxDetailOptions = boxDetail.boxOptions?.filter(
+    (option) => option.isOnlineSerieBox === false
+  );
 
   const handleAddToCart = () => {
     addToCart(boxDetail, selectedOption);
@@ -96,7 +103,7 @@ export default function ProductDetailScreen({ route }) {
       <View style={styles.optionContainer}>
         <Text style={styles.label}>Options:</Text>
         <View style={styles.optionButtons}>
-          {boxDetail.boxOptions?.map((option) => (
+          {filteredBoxDetailOptions?.map((option) => (
             <TouchableOpacity
               key={option.boxOptionId}
               style={[
