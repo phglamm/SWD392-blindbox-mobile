@@ -39,8 +39,11 @@ export default function ProductScreen() {
   const numColumns = 2;
 
   const ProductCard = ({ item }) => {
+    const filterBoxOptions = item.boxOptions.filter(
+      (option) => option.isOnlineSerieBox === false
+    );
     const lowestPrice = Math.min(
-      ...item.boxOptions.map((option) => option.displayPrice)
+      ...filterBoxOptions.map((option) => option.displayPrice)
     );
     return (
       <TouchableOpacity

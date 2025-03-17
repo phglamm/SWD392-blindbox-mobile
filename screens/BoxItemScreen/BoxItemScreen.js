@@ -1,5 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, TextInput, Image, StyleSheet, FlatList, TouchableOpacity, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  Image,
+  StyleSheet,
+  FlatList,
+  TouchableOpacity,
+  ScrollView,
+} from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import banner2 from "../../assets/BoxItemBanner/banner2.png";
 import banner3 from "../../assets/BoxItemBanner/banner3.png";
@@ -40,17 +49,23 @@ const BoxItemScreen = ({ navigation }) => {
   const totalPages = Math.ceil(filteredProducts.length / pageSize);
 
   // Chia dữ liệu theo trang
-  const currentPageData = filteredProducts.slice((page - 1) * pageSize, page * pageSize);
+  const currentPageData = filteredProducts.slice(
+    (page - 1) * pageSize,
+    page * pageSize
+  );
 
   const renderProductCard = ({ item }) => (
     <TouchableOpacity
       style={styles.card}
       onPress={() => {
-        console.log("Navigating to BoxItemDetailScreen with ID:", item.boxItemId); // Kiểm tra xem có log không
+        console.log(
+          "Navigating to BoxItemDetailScreen with ID:",
+          item.boxItemId
+        ); // Kiểm tra xem có log không
         navigation.navigate("BoxItemDetail", { boxItemId: item.boxItemId });
       }}
     >
-      <Image source={{ uri: "https://via.placeholder.com/150" }} style={styles.cardImage} />
+      <Image source={{ uri: item.imageUrl }} style={styles.cardImage} />
       <Text style={styles.productName}>{item.boxItemName}</Text>
       <Text style={styles.productColor}>Color: {item.boxItemColor}</Text>
       <View style={styles.ratingContainer}>
@@ -65,7 +80,6 @@ const BoxItemScreen = ({ navigation }) => {
       </View>
     </TouchableOpacity>
   );
-  
 
   const clearSearch = () => {
     setSearchQuery("");
@@ -135,7 +149,10 @@ const BoxItemScreen = ({ navigation }) => {
 
         <TouchableOpacity
           onPress={handleNextPage}
-          style={[styles.paginationButton, page === totalPages && styles.disabledButton]}
+          style={[
+            styles.paginationButton,
+            page === totalPages && styles.disabledButton,
+          ]}
           disabled={page === totalPages}
         >
           <Text style={styles.paginationText}>Next</Text>

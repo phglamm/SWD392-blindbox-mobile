@@ -13,6 +13,7 @@ import { Picker } from "@react-native-picker/picker";
 import Toast from "react-native-toast-message";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import api from "../../api/api";
+import { useNavigation } from "@react-navigation/native";
 
 export default function CheckOutScreen() {
   const { cart, clearCart } = useCart();
@@ -25,7 +26,8 @@ export default function CheckOutScreen() {
   const [paymentMethod, setPaymentMethod] = useState("");
   const [user, setUser] = useState(null);
   const [userAddress, setUserAddress] = useState([]);
-
+  const [selectedAddressId, setSelectedAddressId] = useState(null);
+  const navigation = useNavigation();
   useEffect(() => {
     const fetchUser = async () => {
       const userData = await AsyncStorage.getItem("user");
@@ -59,7 +61,7 @@ export default function CheckOutScreen() {
     0
   );
 
-  const handleCheckout = () => {
+  const handleCheckout = async () => {
     if (
       !name ||
       !address ||
@@ -75,13 +77,49 @@ export default function CheckOutScreen() {
         visibilityTime: 2000,
       });
       return;
+    } else {
+      try {
+        const requestData = {
+          addressId: selectedAddressId,
+          userId: user.userId,
+          subTotal: totalPrice,
+          shippingFee: 0,
+          totalPrice: totalPrice,
+          voucherId: 1,
+          paymentMethod: paymentMethod,
+          orderItemRequestDto: cart.map((item) => ({
+            quantity: item.quantity,
+            price: item.selectedOption.displayPrice,
+            boxOptionId: item.selectedOption.boxOptionId,
+            originPrice: item.selectedOption.originPrice,
+            isOnlineSerieBox: item.selectedOption.isOnlineSerieBox,
+            userRolledItemId: null,
+            orderItemOpenRequestNumberDto: 0,
+          })),
+        };
+        console.log(requestData);
+        const response = await api.post("/Payment/make-Payment", requestData);
+        console.log(response.data);
+        Toast.show({
+          type: "success",
+          text1: "Order placed successfully!",
+          text2: `Payment method: ${paymentMethod}`,
+          visibilityTime: 2000,
+        });
+        clearCart();
+        navigation.navigate("User", {
+          screen: "ManageOrder",
+        });
+      } catch (error) {
+        console.log(error.response.data);
+        Toast.show({
+          type: "error",
+          text1: "Error",
+          text2: "Order failed",
+          visibilityTime: 2000,
+        });
+      }
     }
-    Toast.show({
-      type: "success",
-      text1: "Order placed successfully!",
-      text2: `Payment method: ${paymentMethod}`,
-      visibilityTime: 2000,
-    });
   };
 
   return (
@@ -115,7 +153,7 @@ export default function CheckOutScreen() {
 
         <Text style={styles.label}>Payment Method</Text>
         <View style={styles.paymentContainer}>
-          {["VNPAY", "Cash on Delivery"].map((method) => (
+          {["VNPAY", "COD"].map((method) => (
             <TouchableOpacity
               key={method}
               style={styles.radioButtonContainer}
@@ -136,6 +174,7 @@ export default function CheckOutScreen() {
           <Picker
             selectedValue={address}
             onValueChange={(itemValue) => {
+              setSelectedAddressId(parseInt(itemValue));
               const selected = userAddress.find(
                 (addr) => addr.addressId === parseInt(itemValue) // Convert the itemValue back to int
               );

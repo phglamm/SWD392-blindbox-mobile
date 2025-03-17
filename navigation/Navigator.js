@@ -81,7 +81,11 @@ export default function Navigator() {
   const BoxItemStack = () => {
     return (
       <Stack.Navigator>
-        <Stack.Screen name="BoxItem" component={BoxItemScreen} />
+        <Stack.Screen
+          name="BoxItem"
+          component={BoxItemScreen}
+          options={{ headerShown: false }}
+        />
         <Stack.Screen name="BoxItemDetail" component={BoxItemDetailScreen} />
         <Stack.Screen
           name="ProductDetailScreen"

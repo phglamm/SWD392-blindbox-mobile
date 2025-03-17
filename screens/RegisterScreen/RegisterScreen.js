@@ -1,7 +1,15 @@
 import React, { useState } from "react";
-import { View, StyleSheet, TouchableOpacity, Image, ScrollView } from "react-native";
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+  ScrollView,
+} from "react-native";
 import { TextInput, Button, Text, RadioButton } from "react-native-paper";
 import { FontAwesome } from "@expo/vector-icons";
+import Toast from "react-native-toast-message";
+import api from "../../api/api";
 
 export default function RegisterScreen({ navigation }) {
   const [username, setUsername] = useState("");
@@ -11,11 +19,45 @@ export default function RegisterScreen({ navigation }) {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [secureText, setSecureText] = useState(true);
-  const [gender, setGender] = useState("male"); // 'male' or 'female'
+  const [gender, setGender] = useState(true); // 'male' or 'female'
+
+  const handleRegister = async () => {
+    try {
+      const registerData = {
+        username,
+        fullName,
+        phoneNumber: phone,
+        email,
+        password,
+        gender,
+        roleId: 3,
+        isTestAccount: false,
+      };
+      const response = await api.post("Account/register", registerData);
+      console.log(response.data);
+      Toast.show({
+        type: "success",
+        text1: "Register success",
+        text2: "Please login",
+      });
+      navigation.navigate("Login");
+    } catch (error) {
+      console.error("Error registering:", error.response.data);
+      Toast.show({
+        type: "error",
+        text1: "Error registering",
+        text2: "Please try again",
+      });
+    }
+  };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Image source={require("../../assets/Logo-removebg.png")} style={styles.logo} resizeMode="contain" />
+      <Image
+        source={require("../../assets/Logo-removebg.png")}
+        style={styles.logo}
+        resizeMode="contain"
+      />
       <Text style={styles.title}>Create an account</Text>
 
       {/* Input Username */}
@@ -26,7 +68,12 @@ export default function RegisterScreen({ navigation }) {
         value={username}
         onChangeText={(text) => setUsername(text)}
         style={styles.input}
-        theme={{ colors: { primary: "rgb(248, 150, 150)", outline: "rgb(248, 150, 150)" } }}
+        theme={{
+          colors: {
+            primary: "rgb(248, 150, 150)",
+            outline: "rgb(248, 150, 150)",
+          },
+        }}
       />
 
       {/* Input Full Name */}
@@ -37,7 +84,12 @@ export default function RegisterScreen({ navigation }) {
         value={fullName}
         onChangeText={(text) => setFullName(text)}
         style={styles.input}
-        theme={{ colors: { primary: "rgb(248, 150, 150)", outline: "rgb(248, 150, 150)" } }}
+        theme={{
+          colors: {
+            primary: "rgb(248, 150, 150)",
+            outline: "rgb(248, 150, 150)",
+          },
+        }}
       />
 
       {/* Input Phone */}
@@ -49,7 +101,12 @@ export default function RegisterScreen({ navigation }) {
         onChangeText={(text) => setPhone(text)}
         style={styles.input}
         keyboardType="phone-pad"
-        theme={{ colors: { primary: "rgb(248, 150, 150)", outline: "rgb(248, 150, 150)" } }}
+        theme={{
+          colors: {
+            primary: "rgb(248, 150, 150)",
+            outline: "rgb(248, 150, 150)",
+          },
+        }}
       />
 
       {/* Input Email */}
@@ -60,7 +117,12 @@ export default function RegisterScreen({ navigation }) {
         value={email}
         onChangeText={(text) => setEmail(text)}
         style={styles.input}
-        theme={{ colors: { primary: "rgb(248, 150, 150)", outline: "rgb(248, 150, 150)" } }}
+        theme={{
+          colors: {
+            primary: "rgb(248, 150, 150)",
+            outline: "rgb(248, 150, 150)",
+          },
+        }}
       />
 
       {/* Input Password */}
@@ -68,12 +130,22 @@ export default function RegisterScreen({ navigation }) {
         label="Password"
         mode="outlined"
         left={<TextInput.Icon icon="lock" />}
-        right={<TextInput.Icon icon={secureText ? "eye-off" : "eye"} onPress={() => setSecureText(!secureText)} />}
+        right={
+          <TextInput.Icon
+            icon={secureText ? "eye-off" : "eye"}
+            onPress={() => setSecureText(!secureText)}
+          />
+        }
         secureTextEntry={secureText}
         value={password}
         onChangeText={(text) => setPassword(text)}
         style={styles.input}
-        theme={{ colors: { primary: "rgb(248, 150, 150)", outline: "rgb(248, 150, 150)" } }}
+        theme={{
+          colors: {
+            primary: "rgb(248, 150, 150)",
+            outline: "rgb(248, 150, 150)",
+          },
+        }}
       />
 
       {/* Confirm Password */}
@@ -81,12 +153,22 @@ export default function RegisterScreen({ navigation }) {
         label="Confirm Password"
         mode="outlined"
         left={<TextInput.Icon icon="lock" />}
-        right={<TextInput.Icon icon={secureText ? "eye-off" : "eye"} onPress={() => setSecureText(!secureText)} />}
+        right={
+          <TextInput.Icon
+            icon={secureText ? "eye-off" : "eye"}
+            onPress={() => setSecureText(!secureText)}
+          />
+        }
         secureTextEntry={secureText}
         value={confirmPassword}
         onChangeText={(text) => setConfirmPassword(text)}
         style={styles.input}
-        theme={{ colors: { primary: "rgb(248, 150, 150)", outline: "rgb(248, 150, 150)" } }}
+        theme={{
+          colors: {
+            primary: "rgb(248, 150, 150)",
+            outline: "rgb(248, 150, 150)",
+          },
+        }}
       />
 
       {/* Gender Selection */}
@@ -95,11 +177,11 @@ export default function RegisterScreen({ navigation }) {
         <RadioButton.Group onValueChange={setGender} value={gender}>
           <View style={styles.radioGroup}>
             <View style={styles.radioButton}>
-              <RadioButton value="male" />
+              <RadioButton value={true} />
               <Text>Male</Text>
             </View>
             <View style={styles.radioButton}>
-              <RadioButton value="female" />
+              <RadioButton value={false} />
               <Text>Female</Text>
             </View>
           </View>
@@ -107,7 +189,11 @@ export default function RegisterScreen({ navigation }) {
       </View>
 
       {/* Register Button */}
-      <Button mode="contained" onPress={() => console.log("Register pressed")} style={styles.button}>
+      <Button
+        mode="contained"
+        onPress={() => handleRegister()}
+        style={styles.button}
+      >
         Create Account
       </Button>
 
@@ -123,7 +209,9 @@ export default function RegisterScreen({ navigation }) {
       <Text style={styles.registerText}>
         I Already Have an Account{" "}
         <TouchableOpacity onPress={() => navigation.navigate("Login")}>
-          <Text style={{ fontWeight: "bold", color: "rgb(248, 150, 150)" }}>Login</Text>
+          <Text style={{ fontWeight: "bold", color: "rgb(248, 150, 150)" }}>
+            Login
+          </Text>
         </TouchableOpacity>
       </Text>
     </ScrollView>
