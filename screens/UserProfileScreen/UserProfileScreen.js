@@ -89,9 +89,6 @@ export default function UserProfileScreen({ route }) {
             <Text style={styles.memberStatus}>Mystery Minis Member</Text>
           </View>
         </View>
-        <View style={styles.headerRight}>
-          <Text style={styles.avatarText}>Avatar</Text>
-        </View>
       </View>
 
       <View style={styles.profileInfo}>
@@ -156,7 +153,7 @@ const styles = StyleSheet.create({
   },
   header: {
     height: "20%",
-    backgroundColor: "black",
+    backgroundColor: "#E3708B",
     flexDirection: "row",
     justifyContent: "space-between",
     borderWidth: 1,
@@ -178,7 +175,7 @@ const styles = StyleSheet.create({
     padding: "5%",
   },
   fullname: {
-    color: "red",
+    color: "black",
     fontWeight: "bold",
     fontSize: 30,
   },
@@ -191,7 +188,8 @@ const styles = StyleSheet.create({
     padding: "1%",
     textAlign: "center",
     borderRadius: 15,
-    backgroundColor: "gray",
+    backgroundColor: "white",
+    borderWidth: 1,
     fontSize: 15,
   },
   headerRight: {

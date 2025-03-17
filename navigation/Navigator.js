@@ -20,7 +20,7 @@ import ManageOrder from "../screens/ManageOrderScreen/ManageOrder";
 import AddressBook from "../screens/AddressBook/AddressBook";
 import SearchInput from "../components/SearchInput/SearchInput";
 import OrderDetailScreen from "./../screens/OrderDetailScreen/OrderDetailScreen";
-
+import Icon from "react-native-vector-icons/FontAwesome";
 export default function Navigator() {
   const Tab = createBottomTabNavigator();
   const Stack = createNativeStackNavigator();
@@ -136,31 +136,56 @@ export default function Navigator() {
   const MainTab = () => {
     return (
       <Tab.Navigator>
-        <Tab.Screen
-          name="Home"
-          component={HomeStack}
-          options={{ headerShown: false }}
-        />
-        <Tab.Screen
-          name="Product"
-          component={ProductStack}
-          options={{ headerShown: false }}
-        />
-        <Tab.Screen
-          name="Box Item"
-          component={BoxItemStack}
-          options={{ headerShown: false }}
-        />
-        <Tab.Screen
-          name="User"
-          component={UserStack}
-          options={{ headerShown: false }}
-        />
-        <Tab.Screen
-          name="Cart"
-          component={CartStack}
-          options={{ headerShown: false }}
-        />
+      <Tab.Screen
+        name="Home"
+        component={HomeStack}
+        options={{
+        headerShown: false,
+        tabBarIcon: () => (
+         <Icon name="home" size={30} />
+        ),
+        }}
+      />
+      <Tab.Screen
+        name="Product"
+        component={ProductStack}
+        options={{
+        headerShown: false,
+        tabBarIcon: () => (
+         <Icon name="github-alt" size={30} />
+        ),
+        }}
+      />
+      <Tab.Screen
+        name="Box Item"
+        component={BoxItemStack}
+        options={{
+        headerShown: false,
+        tabBarIcon: () => (
+          <Icon name="inbox" size={30} />
+        ),
+        }}
+      />
+      <Tab.Screen
+        name="User"
+        component={UserStack}
+        options={{
+        headerShown: false,
+        tabBarIcon: () => (
+          <Icon name="user-circle" size={30} />
+        ),
+        }}
+      />
+      <Tab.Screen
+        name="Cart"
+        component={CartStack}
+        options={{
+        headerShown: false,
+        tabBarIcon: () => (
+          <Icon name="shopping-cart" size={30} />
+        ),
+        }}
+      />
       </Tab.Navigator>
     );
   };

@@ -144,7 +144,7 @@ const styles = StyleSheet.create({
   },
   userInfoContainer: {
     height: 145,
-    backgroundColor: "black",
+    backgroundColor: "#E3708B",
     flexDirection: "row",
     justifyContent: "space-between",
     borderWidth: 1,
@@ -166,7 +166,7 @@ const styles = StyleSheet.create({
     padding: "5%",
   },
   username: {
-    color: "red",
+    color: "black",
     fontWeight: "bold",
     fontSize: 30,
   },
@@ -179,7 +179,9 @@ const styles = StyleSheet.create({
     padding: "1%",
     textAlign: "center",
     borderRadius: 15,
-    backgroundColor: "gray",
+    backgroundColor: "white",
+    borderColor: "black",
+    borderWidth: 1,
     fontSize: 15,
   },
   trackingContainer: {
