@@ -359,7 +359,6 @@ const styles = StyleSheet.create({
     borderColor: "gray",
     alignItems: "center",
     paddingBottom: 10,
-    
   },
   orderItemImageContainer: {
     width: "30%",
@@ -444,7 +443,7 @@ const styles = StyleSheet.create({
   },
   cancelButton: {
     backgroundColor: "red",
-    width: "40%",
+    width: "100%",
     height: 40,
     justifyContent: "center",
     borderRadius: 5,
@@ -452,6 +451,7 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "white",
     fontWeight: "bold",
+    textAlign: "center",
   },
 });
 
