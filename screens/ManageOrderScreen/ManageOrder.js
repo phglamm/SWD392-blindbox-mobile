@@ -262,14 +262,17 @@ const styles = StyleSheet.create({
     color: "red",
   },
   ordersContainer: {
+    backgroundColor: "white",
     flexDirection: "column",
     justifyContent: "space-between",
     height: "100%",
     gap: "2%",
+    paddingBottom: "10%",
   },
   ordersScrollView: {
     padding: "5%",
     backgroundColor: "white",
+    marginBottom: "10%",
   },
   orderCard: {
     backgroundColor: "white",
