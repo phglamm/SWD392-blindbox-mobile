@@ -1,32 +1,37 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity, Modal } from 'react-native';
-import { Rating } from 'react-native-ratings';
-import api from '../../api/api';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import Toast from 'react-native-toast-message';
-import { useNavigation } from '@react-navigation/native';
-
-
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  Modal,
+} from "react-native";
+import { Rating } from "react-native-ratings";
+import api from "../../api/api";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import Toast from "react-native-toast-message";
+import { useNavigation } from "@react-navigation/native";
 
 const BoxItemDetailScreen = ({ route }) => {
   const { boxItemId } = route.params;
   const [itemDetails, setItemDetails] = useState(null);
   const [votes, setVotes] = useState([]);
-  const [modalVisible, setModalVisible] = useState(false);  // State for Modal visibility
-  const [userRating, setUserRating] = useState(0);  // State to store selected rating
+  const [modalVisible, setModalVisible] = useState(false); // State for Modal visibility
+  const [userRating, setUserRating] = useState(0); // State to store selected rating
   const [user, setUser] = useState(null);
   const navigation = useNavigation();
 
+  const fetchItemDetails = async () => {
+    try {
+      const response = await api.get(`/BoxItem/withDTO/${boxItemId}`);
+      setItemDetails(response.data);
+    } catch (error) {
+      console.error("Error fetching item details:", error);
+    }
+  };
   useEffect(() => {
-    const fetchItemDetails = async () => {
-      try {
-        const response = await api.get(`/BoxItem/withDTO/${boxItemId}`);
-        setItemDetails(response.data);
-      } catch (error) {
-        console.error('Error fetching item details:', error);
-      }
-    };
-
     const fetchUser = async () => {
       const userData = await AsyncStorage.getItem("user");
       if (userData) {
@@ -35,15 +40,16 @@ const BoxItemDetailScreen = ({ route }) => {
     };
     fetchUser();
     fetchItemDetails();
+    fetchVotes();
   }, [boxItemId]);
-
 
   const fetchVotes = async () => {
     try {
       const response = await api.get(`/BoxItem/${boxItemId}/votes`);
+      console.log(response.data);
       setVotes(response.data);
     } catch (error) {
-      console.error('Error fetching votes:', error);
+      console.error("Error fetching votes:", error);
     }
   };
 
@@ -52,34 +58,36 @@ const BoxItemDetailScreen = ({ route }) => {
     if (user) {
       try {
         // Nếu chưa vote, gửi yêu cầu vote mới
-        const response = await api.post('/BoxItem/vote', {
+        const response = await api.post("/BoxItem/vote", {
           boxItemId: boxItemId,
           userId: user.userId, // Sử dụng userId lấy từ thông tin người dùng
           rating: userRating,
         });
 
-        console.log('Vote submitted successfully:', response);
+        console.log("Vote submitted successfully:", response);
         setModalVisible(false); // Đóng modal sau khi gửi
+        fetchItemDetails();
         fetchVotes(); // Cập nhật danh sách votes
         Toast.show({
-          type: 'success',
-          text1: 'Success',
-          text2: 'Vote submitted successfully.',
+          type: "success",
+          text1: "Success",
+          text2: "Vote submitted successfully.",
         });
       } catch (error) {
-        console.error('Error submitting vote:', error.response ? error.response.data : error.message);
+        console.error(
+          "Error submitting vote:",
+          error.response ? error.response.data : error.message
+        );
       }
     } else {
       Toast.show({
-        type: 'error',
-        text1: 'Error',
-        text2: 'You need to login to vote.',
+        type: "error",
+        text1: "Error",
+        text2: "You need to login to vote.",
       });
-      console.log('You need to login to vote.');
+      console.log("You need to login to vote.");
     }
   };
-
-
 
   if (!itemDetails) {
     return (
@@ -101,13 +109,15 @@ const BoxItemDetailScreen = ({ route }) => {
             />
           )}
           <Text style={styles.productName}>{itemDetails.boxItemName}</Text>
-          <Text style={styles.productDescription}>{itemDetails.boxItemDescription}</Text>
+          <Text style={styles.productDescription}>
+            {itemDetails.boxItemDescription}
+          </Text>
 
           <Text style={styles.boldText}>Eyes: {itemDetails.boxItemEyes}</Text>
           <Text style={styles.boldText}>Color: {itemDetails.boxItemColor}</Text>
 
           <Text style={styles.boldText}>
-            Secret: {itemDetails.isSecret ? 'Secret' : 'Normal'}
+            Secret: {itemDetails.isSecret ? "Secret" : "Normal"}
           </Text>
         </View>
 
@@ -155,22 +165,25 @@ const BoxItemDetailScreen = ({ route }) => {
 
       {/* Vote Button */}
       <View style={styles.buttonsContainer}>
-        <TouchableOpacity style={[styles.button, { backgroundColor: '#7EC0EE' }]} onPress={() => setModalVisible(true)}>
+        <TouchableOpacity
+          style={[styles.button, { backgroundColor: "#7EC0EE" }]}
+          onPress={() => setModalVisible(true)}
+        >
           <Text style={styles.buttonText}>Vote this Item</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[styles.button, { backgroundColor: '#EEA2AD' }]}
+          style={[styles.button, { backgroundColor: "#EEA2AD" }]}
           onPress={() => {
             if (itemDetails) {
               // Navigate to the product detail screen with the product id
-              navigation.navigate('ProductDetailScreen', { boxId: itemDetails.belongBox.boxId }); 
-
+              navigation.navigate("ProductDetailScreen", {
+                boxId: itemDetails.belongBox.boxId,
+              });
             }
           }}
         >
           <Text style={styles.buttonText}>Hunt this Item</Text>
         </TouchableOpacity>
-
       </View>
 
       {/* Modal for Rating */}
@@ -178,7 +191,8 @@ const BoxItemDetailScreen = ({ route }) => {
         animationType="slide"
         transparent={true}
         visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}>
+        onRequestClose={() => setModalVisible(false)}
+      >
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Vote Item</Text>
@@ -191,7 +205,10 @@ const BoxItemDetailScreen = ({ route }) => {
               startingValue={userRating}
             />
             <View style={styles.modalButtons}>
-              <TouchableOpacity style={styles.modalButton} onPress={() => setModalVisible(false)}>
+              <TouchableOpacity
+                style={styles.modalButton}
+                onPress={() => setModalVisible(false)}
+              >
                 <Text>Cancel</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.modalButton} onPress={submitVote}>
@@ -211,12 +228,12 @@ const styles = StyleSheet.create({
   },
   scrollViewContainer: {
     flexGrow: 1,
-    paddingBottom: 100,  // Adjust padding to allow space for buttons
+    paddingBottom: 100, // Adjust padding to allow space for buttons
   },
   card: {
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     borderRadius: 10,
-    shadowColor: '#F5F5F5',
+    shadowColor: "#F5F5F5",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
     shadowRadius: 10,
@@ -225,14 +242,14 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   image: {
-    width: '100%',
+    width: "100%",
     height: 300,
-    resizeMode: 'cover',
+    resizeMode: "cover",
     borderRadius: 10,
   },
   productName: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginTop: 10,
   },
   productDescription: {
@@ -240,9 +257,9 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   ratingCard: {
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     borderRadius: 10,
-    shadowColor: '#F5F5F5',
+    shadowColor: "#F5F5F5",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
     shadowRadius: 10,
@@ -253,82 +270,82 @@ const styles = StyleSheet.create({
   },
   ratingCardTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 10,
   },
   ratingContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
   },
   boldText: {
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginTop: 10,
   },
   votesContainer: {
     marginTop: 20,
   },
   voteItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 10,
   },
   voteContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   voteText: {
     fontSize: 16,
     marginRight: 10,
   },
   buttonsContainer: {
-    position: 'absolute',
-    bottom: 20,  // Keep buttons at the bottom of the screen
+    position: "absolute",
+    bottom: 20, // Keep buttons at the bottom of the screen
     left: 0,
     right: 0,
     padding: 20,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    backgroundColor: '#fff',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    backgroundColor: "#fff",
   },
   button: {
     paddingVertical: 15,
     paddingHorizontal: 25,
     borderRadius: 5,
-    width: '45%',
+    width: "45%",
   },
   buttonText: {
-    textAlign: 'center',
-    color: '#fff',
+    textAlign: "center",
+    color: "#fff",
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   modalContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalContent: {
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     padding: 20,
     borderRadius: 10,
-    alignItems: 'center',
-    width: '80%',
+    alignItems: "center",
+    width: "80%",
   },
   modalTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 10,
   },
   modalButtons: {
-    flexDirection: 'row',
+    flexDirection: "row",
     marginTop: 20,
-    justifyContent: 'space-between',
-    width: '100%',
+    justifyContent: "space-between",
+    width: "100%",
   },
   modalButton: {
-    backgroundColor: '#7EC0EE',
+    backgroundColor: "#7EC0EE",
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 5,

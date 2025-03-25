@@ -109,6 +109,7 @@ const styles = StyleSheet.create({
   },
 
   boxName: {
+    width: 130,
     fontWeight: "bold",
     fontSize: 16,
   },

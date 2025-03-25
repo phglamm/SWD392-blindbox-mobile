@@ -194,12 +194,19 @@ const OrderDetailScreen = ({ route }) => {
                 <View style={styles.orderSummary}>
                   <View>
                     <Text style={styles.summaryTextLeft}>Payment Method:</Text>
+                    <Text style={styles.summaryTextLeft}>Subtotal:</Text>
                     <Text style={styles.summaryTextLeft}>Shipping Fee: </Text>
                     <Text style={styles.summaryTextLeft}>Order Total: </Text>
                   </View>
                   <View>
                     <Text style={styles.summaryText}>
                       {order.paymentMethod}
+                    </Text>
+                    <Text style={styles.summaryText}>
+                      {order.subTotal.toLocaleString("vi-VN", {
+                        style: "currency",
+                        currency: "VND",
+                      })}
                     </Text>
                     <Text style={styles.summaryText}>
                       {order.shippingFee.toLocaleString("vi-VN", {

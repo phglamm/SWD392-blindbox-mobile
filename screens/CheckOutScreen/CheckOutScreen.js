@@ -27,6 +27,7 @@ export default function CheckOutScreen() {
   const [user, setUser] = useState(null);
   const [userAddress, setUserAddress] = useState([]);
   const [selectedAddressId, setSelectedAddressId] = useState(null);
+  const [shippingFee, setShippingFee] = useState(0);
   const navigation = useNavigation();
   useEffect(() => {
     const fetchUser = async () => {
@@ -50,6 +51,26 @@ export default function CheckOutScreen() {
       } catch (err) {
         console.log(err.message);
       }
+    }
+  };
+
+  const handleCalculateShippingFee = async (selectedAddress) => {
+    const totalQuantity = cart.reduce((acc, item) => acc + item.quantity, 0);
+
+    console.log(selectedAddress);
+    const shippingFeeRequest = {
+      service_id: 53320,
+      to_district_id: selectedAddress.districtId,
+      weight: 500 * totalQuantity,
+    };
+    console.log(shippingFeeRequest);
+    try {
+      const response = await api.post("Shipping/fee", shippingFeeRequest);
+      console.log(response.data);
+      setShippingFee(response.data.data.total);
+    } catch (error) {
+      setShippingFee(40000);
+      console.log(error.response.data);
     }
   };
 
@@ -83,8 +104,8 @@ export default function CheckOutScreen() {
           addressId: selectedAddressId,
           userId: user.userId,
           subTotal: totalPrice,
-          shippingFee: 0,
-          totalPrice: totalPrice,
+          shippingFee: shippingFee,
+          totalPrice: totalPrice + shippingFee,
           voucherId: 1,
           paymentMethod: paymentMethod,
           orderItemRequestDto: cart.map((item) => ({
@@ -178,6 +199,8 @@ export default function CheckOutScreen() {
               const selected = userAddress.find(
                 (addr) => addr.addressId === parseInt(itemValue) // Convert the itemValue back to int
               );
+              handleCalculateShippingFee(selected);
+
               if (selected) {
                 setName(selected.name);
                 setAddress(selected.addressDetail);
@@ -276,12 +299,14 @@ export default function CheckOutScreen() {
         </View>
         <View style={styles.shippingContainer}>
           <Text style={styles.totalText}>Shipping</Text>
-          <Text style={styles.totalText}>-</Text>
+          <Text style={styles.totalText}>
+            {shippingFee.toLocaleString()} VND
+          </Text>
         </View>
         <View style={styles.totalContainer}>
           <Text style={styles.totalText}>Total Order</Text>
           <Text style={styles.totalText}>
-            {totalPrice.toLocaleString()} VND
+            {(totalPrice + shippingFee).toLocaleString()} VND
           </Text>
         </View>
 
