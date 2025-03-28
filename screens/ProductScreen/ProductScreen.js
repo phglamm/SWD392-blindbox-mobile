@@ -11,15 +11,27 @@ import {
 import React, { useEffect, useState } from "react";
 import api from "../../api/api";
 import { useNavigation } from "@react-navigation/native";
+import { FontAwesome } from "@expo/vector-icons"; // Add this import for the icon
 
-export default function ProductScreen() {
+export default function ProductScreen({ route }) {
   const navigation = useNavigation();
   const [boxes, setBoxes] = useState([]);
+  const [filteredBoxes, setFilteredBoxes] = useState([]);
   const [loading, setLoading] = useState(false);
+  const search = route?.params?.search || "";
+  const [searchInput, setSearchInput] = useState(search);
 
   useEffect(() => {
     fetchBoxes();
   }, []);
+
+  useEffect(() => {
+    filterBoxes();
+  }, [boxes, searchInput]);
+
+  useEffect(() => {
+    setSearchInput(search);
+  }, [search]);
 
   const fetchBoxes = async () => {
     if (loading) return;
@@ -27,13 +39,37 @@ export default function ProductScreen() {
     setLoading(true);
     try {
       const response = await api.get(`Box`);
-      const sortReponse = response.data.sort((a, b) => b.boxId - a.boxId);
+      const filterBoxOptions = response.data.filter(
+        (box) => box.boxOptions != null && box.boxOptions.some((option) => option.isOnlineSerieBox === false)
+      );
+      const sortReponse = filterBoxOptions.sort((a, b) => b.boxId - a.boxId);
+
       setBoxes(sortReponse);
     } catch (error) {
       console.log(error);
     } finally {
       setLoading(false);
     }
+  };
+
+  const filterBoxes = () => {
+    if (!searchInput.trim()) {
+      setFilteredBoxes(boxes);
+    } else {
+      const filtered = boxes.filter((box) =>
+        box.boxName.toLowerCase().includes(searchInput.toLowerCase())
+      );
+      setFilteredBoxes(filtered);
+    }
+  };
+
+  const handleSearchChange = (text) => {
+    setSearchInput(text);
+  };
+
+  // Add the clearSearch function
+  const clearSearch = () => {
+    setSearchInput("");
   };
 
   const numColumns = 2;
@@ -58,9 +94,14 @@ export default function ProductScreen() {
             style={styles.image}
           />
           <View style={styles.cardTextSection}>
-            <Text style={styles.cardText}>{item.boxName}</Text>
+            <Text
+              numberOfLines={1}
+              ellipsizeMode="tail"
+              style={styles.cardText}
+            >
+              {item.boxName}
+            </Text>
             <Text style={styles.cardText}>
-              Price: {""}
               {lowestPrice.toLocaleString("vi-VN", {
                 style: "currency",
                 currency: "VND",
@@ -74,14 +115,24 @@ export default function ProductScreen() {
 
   return (
     <View style={styles.container}>
-      {/* <View style={styles.searchContainer}>
-        <TextInput style={styles.searchInput} placeholder="Tìm kiếm" />
-      </View> */}
+      <View style={styles.searchContainer}>
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Search for products"
+          value={searchInput}
+          onChangeText={handleSearchChange}
+        />
+        {searchInput.length > 0 && (
+          <TouchableOpacity onPress={clearSearch} style={styles.clearButton}>
+            <FontAwesome name="times" size={20} color="gray" />
+          </TouchableOpacity>
+        )}
+      </View>
 
       <FlatList
-        data={boxes}
+        data={filteredBoxes}
         renderItem={ProductCard}
-        keyExtractor={(item) => item.boxId}
+        keyExtractor={(item) => item.boxId.toString()}
         numColumns={numColumns}
         contentContainerStyle={styles.list}
       />
@@ -94,33 +145,34 @@ const numColumns = 2;
 
 const styles = StyleSheet.create({
   container: {
+    backgroundColor: "white",
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
   },
   searchContainer: {
-    borderWidth: 1,
-    borderColor: "black",
-    padding: 10,
-    width: "100%",
     flexDirection: "row",
-    justifyContent: "center",
     alignItems: "center",
+    marginHorizontal: 20,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 5,
+    paddingHorizontal: 30,
+    marginTop: 10,
+    marginBottom: 10,
   },
   searchInput: {
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: "black",
-    width: 350,
+    flex: 1,
     height: 40,
-    paddingHorizontal: 20,
+    fontSize: 16,
+  },
+  clearButton: {
+    paddingLeft: 10,
   },
   list: {
-    justifyContent: "center",
-    alignItems: "center",
+    padding: 10,
   },
   card: {
-    borderWidth: 1,
+    elevation: 15,
+    backgroundColor: "white",
     borderColor: "black",
     borderRadius: 10,
     paddingBottom: 10,
@@ -137,8 +189,12 @@ const styles = StyleSheet.create({
   },
   cardText: {
     marginTop: 10,
-    fontSize: 13,
+    fontSize: 16,
+    truncate: true,
+    textAlign: "center",
+    paddingHorizontal: 10,
     fontWeight: "bold",
+    color: "black",
   },
   cardTextSection: {
     width: "100%",

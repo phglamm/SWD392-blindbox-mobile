@@ -46,11 +46,19 @@ export default function Navigator() {
           name="MysteryMinis"
           component={HomeScreen}
           options={{
-            headerTitle: () => <SearchInput />,
+            headerTitle: "MysteryMinis",
             headerTitleAlign: "center",
           }}
         />
-        <Stack.Screen name="Product" component={ProductScreen} />
+
+        <Stack.Screen
+          name="Product"
+          component={ProductScreen}
+          options={{
+            headerTitle: "Our Blind Box",
+            headerTitleAlign: "center",
+          }}
+        />
         <Stack.Screen
           name="ProductDetailScreen"
           component={ProductDetailScreen}
@@ -67,7 +75,7 @@ export default function Navigator() {
           name="Our Product"
           component={ProductScreen}
           options={{
-            headerTitle: () => <SearchInput />,
+            headerTitle: "Our Blind Box",
             headerTitleAlign: "center",
           }}
         />
@@ -161,56 +169,46 @@ export default function Navigator() {
   const MainTab = () => {
     return (
       <Tab.Navigator>
-      <Tab.Screen
-        name="Home"
-        component={HomeStack}
-        options={{
-        headerShown: false,
-        tabBarIcon: () => (
-         <Icon name="home" size={30} />
-        ),
-        }}
-      />
-      <Tab.Screen
-        name="Product"
-        component={ProductStack}
-        options={{
-        headerShown: false,
-        tabBarIcon: () => (
-         <Icon name="github-alt" size={30} />
-        ),
-        }}
-      />
-      <Tab.Screen
-        name="Box Item"
-        component={BoxItemStack}
-        options={{
-        headerShown: false,
-        tabBarIcon: () => (
-          <Icon name="inbox" size={30} />
-        ),
-        }}
-      />
-      <Tab.Screen
-        name="User"
-        component={UserStack}
-        options={{
-        headerShown: false,
-        tabBarIcon: () => (
-          <Icon name="user-circle" size={30} />
-        ),
-        }}
-      />
-      <Tab.Screen
-        name="Cart"
-        component={CartStack}
-        options={{
-        headerShown: false,
-        tabBarIcon: () => (
-          <Icon name="shopping-cart" size={30} />
-        ),
-        }}
-      />
+        <Tab.Screen
+          name="Home"
+          component={HomeStack}
+          options={{
+            headerShown: false,
+            tabBarIcon: () => <Icon name="home" size={30} />,
+          }}
+        />
+        <Tab.Screen
+          name="Product"
+          component={ProductStack}
+          options={{
+            headerShown: false,
+            tabBarIcon: () => <Icon name="github-alt" size={30} />,
+          }}
+        />
+        <Tab.Screen
+          name="Box Item"
+          component={BoxItemStack}
+          options={{
+            headerShown: false,
+            tabBarIcon: () => <Icon name="inbox" size={30} />,
+          }}
+        />
+        <Tab.Screen
+          name="User"
+          component={UserStack}
+          options={{
+            headerShown: false,
+            tabBarIcon: () => <Icon name="user-circle" size={30} />,
+          }}
+        />
+        <Tab.Screen
+          name="Cart"
+          component={CartStack}
+          options={{
+            headerShown: false,
+            tabBarIcon: () => <Icon name="shopping-cart" size={30} />,
+          }}
+        />
       </Tab.Navigator>
     );
   };

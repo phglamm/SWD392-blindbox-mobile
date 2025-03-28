@@ -156,7 +156,7 @@ export default function ProductDetailScreen({ route }) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
+  container: { flex: 1, backgroundColor: "white" },
   scrollContainer: { paddingBottom: 100 }, // Prevents content from being covered
 
   imageContainer: {

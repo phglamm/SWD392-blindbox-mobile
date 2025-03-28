@@ -26,6 +26,7 @@ export default function CartScreen() {
         <Text style={styles.emptyText}>Your cart is empty</Text>
       ) : (
         <FlatList
+          style={{ marginBottom: 160 }}
           data={cart}
           keyExtractor={(item) =>
             `${item.boxId}-${item.selectedOption.boxOptionId}`
@@ -105,16 +106,22 @@ export default function CartScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 10 },
+  container: { flex: 1, backgroundColor: "", padding: 10 },
   emptyText: { textAlign: "center", fontSize: 16, marginTop: 20 },
   cartItem: {
     flexDirection: "row",
     padding: 10,
     borderBottomWidth: 1,
     borderColor: "#ccc",
+    elevation: 6,
+    marginVertical: 5,
+    marginHorizontal: 5,
+    shadowColor: "black",
+    backgroundColor: "white",
+    borderRadius: 10,
   },
   image: { width: 80, height: 80, marginRight: 10 },
-  details: { flex: 1 },
+  details: { flex: 1,  },
   boxName: { fontSize: 18, fontWeight: "bold" },
   price: { color: "#F89696", fontSize: 16, fontWeight: "bold" },
   quantityContainer: {
@@ -136,6 +143,7 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderColor: "#ccc",
     alignItems: "center",
+   
   },
 
   totalContainer: {

@@ -19,12 +19,19 @@ export default function FavoritesScreen() {
       {favorites.length > 0 ? (
         <FlatList
           data={favorites}
-          keyExtractor={(item) => item.boxId.toString()}
+          keyExtractor={(item) => item.boxId?.toString()}
           renderItem={({ item }) => (
             <View style={styles.itemContainer}>
               <View style={styles.itemContent}>
                 <Image
-                  source={{ uri: item?.boxImage[0]?.boxImageUrl }}
+                  source={{
+                    uri:
+                      item?.boxImage &&
+                      Array.isArray(item.boxImage) &&
+                      item.boxImage.length > 0
+                        ? item.boxImage[0]?.boxImageUrl
+                        : "https://via.placeholder.com/100", // Fallback image URL
+                  }}
                   style={styles.image}
                 />
                 <Text style={styles.boxName}>{item.boxName}</Text>
@@ -68,6 +75,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "gray",
     padding: 10,
+    backgroundColor: "white",
+    elevation: 6,
+    marginVertical: 5,
+    borderRadius: 10,
+    marginHorizontal: 10,
     // marginVertical: 5,
   },
   itemContent: {
@@ -81,7 +93,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   buttonContainer: {
-    flexDirection: "row",
+    flexDirection: "column",
     justifyContent: "space-around",
     gap: 10,
   },
@@ -92,6 +104,9 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   buttonView: {
+    textAlign: "center",
+    justifyContent: "center",
+    alignItems: "center",
     paddingVertical: 5,
     paddingHorizontal: 10,
     backgroundColor: "#fff",

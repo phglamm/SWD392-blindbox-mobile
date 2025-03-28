@@ -1,9 +1,18 @@
 import { useNavigation } from "@react-navigation/native";
 import { TextInput, View } from "react-native";
 import Icon from "react-native-vector-icons/AntDesign";
+import { useState } from "react";
 
 const SearchInput = () => {
   const navigation = useNavigation();
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const handleSearch = () => {
+    if (searchQuery.trim()) {
+      navigation.navigate("Product", { search: searchQuery.trim() });
+    }
+  };
+
   return (
     <View style={{ width: "100%", flexDirection: "row", alignItems: "center" }}>
       <TextInput
@@ -14,7 +23,12 @@ const SearchInput = () => {
           borderWidth: 1,
           borderRadius: 5,
           width: "80%",
+          paddingHorizontal: 10,
         }}
+        value={searchQuery}
+        onChangeText={setSearchQuery}
+        onSubmitEditing={handleSearch}
+        returnKeyType="search"
       />
       <View
         style={{
