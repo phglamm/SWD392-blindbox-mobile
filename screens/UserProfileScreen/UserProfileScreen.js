@@ -1,4 +1,4 @@
-import { View, Text, TextInput, TouchableOpacity, Button, StyleSheet } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, Button, StyleSheet, Image } from "react-native";
 import React, { useEffect, useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import { useNavigation } from "@react-navigation/native";
@@ -82,12 +82,24 @@ export default function UserProfileScreen({ route }) {
       <View style={styles.header}>
         <View style={styles.headerLeft}>
           <View>
-            <Text style={styles.fullname}>{userData.fullname}</Text>
-            <Text style={styles.phone}>{userData.phone}</Text>
+            <Text style={styles.fullname}>{userData.fullname || "N/A"}</Text>
+            <Text style={styles.phone}>{userData.phone || "N/A"}</Text>
           </View>
           <View>
             <Text style={styles.memberStatus}>Mystery Minis Member</Text>
           </View>
+        </View>
+        <View style={styles.headerRight}>
+          {userData.avatarUrl ? (
+            <Image
+              source={{ uri: userData.avatarUrl }}
+              style={{ width: 100, height: 100, borderRadius: 50 }}
+            />
+          ) : (
+            <View style={{ width: 100, height: 100, borderRadius: 50, backgroundColor:"gray", justifyContent: "center", alignItems: "center" }}>
+              <Text style={styles.avatarText}>No Avatar</Text>
+            </View>
+          )}
         </View>
       </View>
 
@@ -113,7 +125,7 @@ export default function UserProfileScreen({ route }) {
                 ) : (
                   <TextInput
                     style={styles.textInput}
-                    value={info.value}
+                    value={info.value || ""}
                     onChangeText={(text) => handleInputChange(info.key, text)}
                   />
                 )
@@ -124,7 +136,7 @@ export default function UserProfileScreen({ route }) {
                       ? info.value === true
                         ? "Male"
                         : "Female"
-                      : info.value}
+                      : info.value || "N/A"}
                   </Text>
                 </View>
               )}
@@ -195,7 +207,7 @@ const styles = StyleSheet.create({
   headerRight: {
     width: "35%",
     height: "100%",
-    backgroundColor: "red",
+
     justifyContent: "center",
     alignItems: "center",
   },

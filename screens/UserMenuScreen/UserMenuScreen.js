@@ -4,6 +4,7 @@ import {
   TouchableOpacity,
   ScrollView,
   StyleSheet,
+  Image,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
@@ -74,6 +75,27 @@ export default function UserMenuScreen() {
               <Text style={styles.membership}>Mystery Minis Member</Text>
             </View>
           </View>
+          <View style={styles.headerRight}>
+            {user && user.avatarUrl ? (
+              <Image
+                source={{ uri: user.avatarUrl }}
+                style={{ width: 100, height: 100, borderRadius: 50 }}
+              />
+            ) : (
+              <View
+                style={{
+                  width: 100,
+                  height: 100,
+                  borderRadius: 50,
+                  backgroundColor: "gray",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Text style={styles.avatarText}>No Avatar</Text>
+              </View>
+            )}
+          </View>
         </View>
 
         <View style={styles.trackingContainer}>
@@ -97,26 +119,46 @@ export default function UserMenuScreen() {
         </View>
 
         <View style={styles.menuContainer}>
-          {menuItems.map((item, index) => (
-            <TouchableOpacity
-              key={index}
-              onPress={() => {
-                if (item.link === "UserProfile") {
-                  navigation.navigate(item.link, {
-                    email: user.email,
-                  });
-                } else if (item.link === "ManageOrder") {
-                  navigation.navigate(item.link, { userId: user.userId });
-                } else {
-                  navigation.navigate(item.link);
-                }
-              }}
-              style={styles.menuItem}
-            >
-              <Icon name={item.icon} size={30} />
-              <Text style={styles.menuItemText}>{item.title}</Text>
-            </TouchableOpacity>
-          ))}
+          {menuItems.map((item, index) => {
+            // Check if item is Contact Us or Setting
+            const isDisabled = item.title === "Contact Us" || item.title === "Setting";
+            
+            return (
+              <TouchableOpacity
+                key={index}
+                onPress={() => {
+                  // Don't navigate if disabled
+                  if (isDisabled) return;
+                  
+                  if (item.link === "UserProfile") {
+                    navigation.navigate(item.link, {
+                      email: user.email,
+                    });
+                  } else if (item.link === "ManageOrder") {
+                    navigation.navigate(item.link, { userId: user.userId });
+                  } else {
+                    navigation.navigate(item.link);
+                  }
+                }}
+                style={[
+                  styles.menuItem, 
+                  isDisabled && styles.disabledMenuItem
+                ]}
+              >
+                <Icon 
+                  name={item.icon} 
+                  size={30} 
+                  color={isDisabled ? "#BDBDBD" : "black"}
+                />
+                <Text style={[
+                  styles.menuItemText,
+                  isDisabled && styles.disabledMenuItemText
+                ]}>
+                  {item.title}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
         </View>
 
         <View style={styles.supportContainer}>
@@ -283,5 +325,27 @@ const styles = StyleSheet.create({
   },
   supportItemArrow: {
     textAlign: "right",
+  },
+  avatarText: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: "#E0E0E0",
+    textAlign: "center",
+    textAlignVertical: "center",
+    lineHeight: 100,
+    color: "#666",
+  },
+  headerRight: {
+    padding: 15,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  disabledMenuItem: {
+    backgroundColor: "#F5F5F5",
+    opacity: 1,
+  },
+  disabledMenuItemText: {
+    color: "#BDBDBD",
   },
 });

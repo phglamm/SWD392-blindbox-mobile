@@ -251,15 +251,15 @@ const styles = StyleSheet.create({
   },
   selectedStatusButton: {
     borderBottomWidth: 2,
-    borderBottomColor: "red",
-    backgroundColor: "black",
+    borderBottomColor: "black",
+    backgroundColor: "#E3708B",
   },
   statusButtonText: {
     color: "black",
     textAlign: "center",
   },
   selectedStatusButtonText: {
-    color: "red",
+    color: "black",
   },
   ordersContainer: {
     backgroundColor: "white",
